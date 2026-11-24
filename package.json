@@ -4,6 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "description": "PCIe Speed Explorer: interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet and Wi-Fi.",
+  "license": "MIT",
+  "author": "Paolo Velati",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pvelati/pcie-speed-comparison.git"
+  },
+  "homepage": "https://pvelati.github.io/pcie-speed-comparison/",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@10.9.8",
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=${BASE_PATH:-/}",
@@ -20,11 +31,15 @@
     "@eslint/js": "^9.30.0",
     "eslint": "^9.30.0",
     "globals": "^14.0.0",
-    "puppeteer-core": "^24.0.0",
     "prettier": "^3.6.0",
+    "puppeteer-core": "^25.18.1",
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.35.0",
     "vite": "^7.0.0",
-    "vitest": "^3.2.0"
+    "vitest": "^5.1.1"
+  },
+  "overrides": {
+    "basic-ftp": "^6.2.6",
+    "comment": "force patched MLSD parser (GHSA-5pm8-86m8-9m6r) in the puppeteer -> proxy-agent -> get-uri chain; dev-only, never exercised at runtime"
   }
 }
