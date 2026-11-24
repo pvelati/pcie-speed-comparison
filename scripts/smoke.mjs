@@ -190,6 +190,17 @@ try {
       heroText.includes('256 GB/s') &&
       heroText.includes('not a one-way rate'),
   );
+  check(
+    'hero shows last updated date',
+    (await page.$eval('.hero-updated', (n) => n.textContent)) === 'Last updated: 24 November 2026',
+  );
+  check(
+    'explorer radios mark Gen 6/7 as future (both panels)',
+    await page.$$eval(
+      '.seg-group label',
+      (ls) => ls.filter((l) => l.textContent.trim().endsWith('(future)')).length === 4,
+    ),
+  );
 
   // -- comparison tabs --------------------------------------------------------------
   const clickTab = (label) =>
@@ -242,12 +253,16 @@ try {
 
   await clickTab('PCIe');
   check('PCIe tab: 7 rows (Gen 1–7 ×16)', (await rowCount()) === 7, `got ${await rowCount()}`);
+  check(
+    'PCIe tab: Gen 6/7 marked future',
+    (await page.$eval('.tab-panel', (n) => n.textContent)).includes('Future, not released'),
+  );
 
   await clickTab('Memory');
   check('Memory tab: 6 chart rows (DDR1-6)', (await rowCount()) === 6, `got ${await rowCount()}`);
   const memText = await page.$eval('.tab-panel', (n) => n.textContent);
   check('Memory tab: DDR5 shows 73.6 GB/s per channel', memText.includes('73.6 GB/s'));
-  check('Memory tab: DDR6 labeled roadmap', memText.includes('Roadmap'));
+  check('Memory tab: DDR6 labeled future', memText.includes('Future, not released'));
   check('Memory family note present', (await page.$('.note-memory')) !== null);
 
   // -- nav scrollspy ----------------------------------------------------------------

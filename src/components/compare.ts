@@ -43,7 +43,7 @@ export function pcieChartRows(): ChartRow[] {
       rateKind: 'link',
       rateMeaning: 'Theoretical one-way link ceiling per direction (×16).',
       directionality: 'Full duplex; per-direction value shown, the aggregate would be double.',
-      status: 'standard' as RateStatus,
+      status: g.status ?? 'standard',
       caveat:
         g.family === 'pam4-flit'
           ? 'Nominal PCI-SIG headline ceiling (FLIT/FEC overhead included at the spec level).'
@@ -70,6 +70,7 @@ const STATUS_LABEL: Record<RateStatus, string> = {
   'published-spec': 'Published spec',
   'vendor-example': 'Vendor example',
   roadmap: 'Roadmap',
+  future: 'Future, not released',
 };
 
 const RATE_KIND_LABEL: Record<RateKind, string> = {
@@ -299,7 +300,7 @@ export function buildComparison(): HTMLElement {
         el(
           'p',
           { class: 'family-note note-pcie' },
-          'PCIe rows show one-way (per-direction) ×16 link ceilings. The same links carry the same amount in the other direction at the same time (full duplex).',
+          'PCIe rows show one-way (per-direction) ×16 link ceilings. The same links carry the same amount in the other direction at the same time (full duplex). PCIe 6.0 and 7.0 are specified but not yet shipping products.',
         ),
       );
     }

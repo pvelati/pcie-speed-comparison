@@ -1,6 +1,6 @@
 import './styles.css';
 import { el } from './dom.js';
-import { PCIE_GENERATIONS } from './data/standards.js';
+import { PCIE_GENERATIONS, DATA_CHECKED } from './data/standards.js';
 import { linkMetrics } from './lib/pcie.js';
 import { withUnit } from './lib/format.js';
 import { buildExplorer } from './components/explorer.js';
@@ -46,8 +46,9 @@ function heroSection() {
       'p',
       { class: 'hero-sub' },
       'Understand every lane. Bandwidth figures for PCI Express, compared with USB, HDMI, ',
-      'Ethernet and Wi-Fi, each cited to its standard.',
+      'Ethernet, Wi-Fi and RAM (DDR), each cited to its standard.',
     ),
+    el('p', { class: 'hero-updated' }, `Last updated: ${DATA_CHECKED}`),
     el(
       'div',
       { class: 'hero-figure', 'aria-label': 'PCIe 7.0 ×16 headline figure' },

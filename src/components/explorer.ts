@@ -53,7 +53,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
 
     const genRadios = PCIE_GENERATIONS.map((g) => ({
       value: String(g.generation),
-      label: g.label,
+      label: g.status === 'future' ? `${g.label} (future)` : g.label,
     }));
     const laneRadios = LANE_WIDTHS.map((w) => ({
       value: String(w),
@@ -148,7 +148,8 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       refs.oneWayGbps.textContent = withUnit(m.oneWayGbps, 'Gbps');
       refs.bidirGBps.textContent = withUnit(m.bidirectionalGBps, 'GB/s');
       refs.bidirGbps.textContent = withUnit(m.bidirectionalGbps, 'Gbps');
-      refs.genLabel.textContent = state.gen.label;
+      refs.genLabel.textContent =
+        state.gen.status === 'future' ? `${state.gen.label} (future)` : state.gen.label;
       refs.rawRate.textContent = withUnit(state.gen.rawRateGTs, 'GT/s');
       refs.encoding.textContent = state.gen.encoding;
       refs.laneCount.textContent = `×${state.lanes}`;

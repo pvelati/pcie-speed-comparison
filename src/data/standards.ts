@@ -22,6 +22,8 @@ export interface PcieGeneration {
   x16BidirectionalGBps?: number;
   calculationNote: string;
   sourceIds: string[];
+  /** 'future' = specification published, products not yet shipping. */
+  status?: 'standard' | 'future';
 }
 
 /**
@@ -81,6 +83,7 @@ export const PCIE_GENERATIONS: PcieGeneration[] = [
     encoding: 'PAM4, FLIT mode, FEC/CRC',
     family: 'pam4-flit',
     x16BidirectionalGBps: 256,
+    status: 'future',
     calculationNote:
       'Nominal ceiling from PCI-SIG: 256 GB/s bidirectional x16 → 128 GB/s one-way → 8 GB/s per lane. FLIT/FEC framing means application payload is lower.',
     sourceIds: ['pcisig-60', 'pcisig-60-pam4'],
@@ -89,6 +92,7 @@ export const PCIE_GENERATIONS: PcieGeneration[] = [
     generation: 7,
     label: 'PCIe 7.0',
     rawRateGTs: 128.0,
+    status: 'future',
     encoding: 'PAM4, FLIT-based encoding',
     family: 'pam4-flit',
     x16BidirectionalGBps: 512,
@@ -110,7 +114,7 @@ export const UNCOMMON_LANES = new Set<number>([32]);
 
 export type InterfaceFamily = 'USB' | 'HDMI' | 'Ethernet' | 'Wi-Fi' | 'Memory';
 export type RateKind = 'signaling' | 'link' | 'PHY' | 'theoretical';
-export type RateStatus = 'standard' | 'published-spec' | 'vendor-example' | 'roadmap';
+export type RateStatus = 'standard' | 'published-spec' | 'vendor-example' | 'roadmap' | 'future';
 
 export interface InterfaceRate {
   id: string;
@@ -617,7 +621,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     rateMeaning:
       "Per-channel bandwidth of a 96-bit double data rate bus at 12,800 MT/s per pin, the starting rate in JEDEC's November 2026 DDR6 preview.",
     directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
-    status: 'roadmap',
+    status: 'future',
     caveat:
       'Standard in development: the JEDEC preview extends the roadmap to 14,400 MT/s and beyond, with commercialization expected in 2028-2029. Final details may change.',
     sourceIds: ['jedec-ddr6-preview'],

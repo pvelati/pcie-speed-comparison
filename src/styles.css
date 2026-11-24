@@ -1083,6 +1083,12 @@ p {
   background: transparent;
 }
 
+.status-future {
+  color: var(--amber);
+  border: 1px dashed rgba(251, 191, 36, 0.5);
+  background: transparent;
+}
+
 .src-links {
   display: flex;
   flex-direction: column;
@@ -1717,4 +1723,11 @@ p {
 .caveat-body {
   margin: 8px 0 0;
   color: var(--muted);
+}
+
+.hero-updated {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--faint);
 }
