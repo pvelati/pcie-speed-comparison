@@ -2060,3 +2060,138 @@ input {
   min-width: 34px;
   text-align: right;
 }
+
+/* ==========================================================================
+   Light theme
+   ========================================================================== */
+
+:root.light {
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --surface-2: #e9eef7;
+  --line: #c3cfe3;
+  --line-soft: #d8e1ee;
+  --ink: #0f172a;
+  --muted: #44506a;
+  --faint: #5a6785;
+  --cyan: #0e7490;
+  --blue: #2563eb;
+  --amber: #b45309;
+  --green: #047857;
+  --violet: #7c3aed;
+  --rose: #be123c;
+  color-scheme: light;
+}
+
+:root.light ::selection {
+  background: rgba(14, 116, 144, 0.22);
+}
+
+:root.light a:hover {
+  color: #155e75;
+}
+
+:root.light .seg:hover .seg-text,
+:root.light .tab-btn:hover {
+  border-color: #94a3b8;
+}
+
+:root.light .site-header {
+  background: rgba(243, 246, 251, 0.92);
+}
+
+:root.light .skip-link {
+  color: #ffffff;
+}
+
+/* Theme toggle */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--cyan);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+:root.light .theme-toggle .icon-sun {
+  display: none;
+}
+
+:root.light .theme-toggle .icon-moon {
+  display: block;
+}
+
+/* ==========================================================================
+   Print
+   ========================================================================== */
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 12px;
+  }
+
+  .site-header,
+  .skip-link,
+  .theme-toggle,
+  .hero-chips,
+  .hero::before,
+  .overhead-control,
+  .cross-overhead,
+  .cross-presets,
+  .pill-group,
+  .preset-btn,
+  .seg,
+  .tablist {
+    display: none !important;
+  }
+
+  .section {
+    content-visibility: visible !important;
+    contain-intrinsic-size: auto 0;
+    padding: 16px 0;
+  }
+
+  .hero {
+    padding: 24px 0;
+  }
+
+  a {
+    color: #000000;
+    text-decoration: none;
+  }
+
+  .link-panel,
+  .example-card,
+  .crosslink,
+  .data-table,
+  .source-group {
+    break-inside: avoid;
+  }
+}

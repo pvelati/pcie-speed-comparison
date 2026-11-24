@@ -2,6 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var p = new URLSearchParams(location.search).get('theme');
+          var t = p === 'light' || p === 'dark' ? p : localStorage.getItem('ba-theme');
+          if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          if (t === 'light') document.documentElement.classList.add('light');
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', t === 'light' ? '#f3f6fb' : '#0a0f1e');
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PCIe Speed Explorer: Understand Every Lane</title>
     <meta

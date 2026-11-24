@@ -43,6 +43,41 @@ function heroChips() {
 }
 
 function header() {
+  const docEl = document.documentElement;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const sun = familyIcon('sun', 20);
+  sun.classList.add('icon-sun');
+  const moon = familyIcon('moon', 20);
+  moon.classList.add('icon-moon');
+  const themeBtn = el(
+    'button',
+    {
+      class: 'theme-toggle',
+      id: 'theme-toggle',
+      type: 'button',
+      'aria-pressed': 'false',
+      'aria-label': 'Switch to light theme',
+    },
+    sun,
+    moon,
+  );
+  const syncTheme = () => {
+    const light = docEl.classList.contains('light');
+    themeBtn.setAttribute('aria-pressed', String(light));
+    themeBtn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+    if (meta) meta.setAttribute('content', light ? '#f3f6fb' : '#0a0f1e');
+  };
+  themeBtn.addEventListener('click', () => {
+    const light = !docEl.classList.contains('light');
+    docEl.classList.toggle('light', light);
+    try {
+      localStorage.setItem('ba-theme', light ? 'light' : 'dark');
+    } catch {
+      /* storage unavailable */
+    }
+    syncTheme();
+  });
+  syncTheme();
   return el(
     'header',
     { class: 'site-header' },
@@ -62,6 +97,7 @@ function header() {
       el('a', { href: '#glossary' }, 'Terms'),
       el('a', { href: '#sources' }, 'Sources'),
     ),
+    themeBtn,
   );
 }
 

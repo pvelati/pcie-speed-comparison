@@ -375,6 +375,32 @@ try {
     )) === 0,
   );
 
+  // -- theme ---------------------------------------------------------
+  await page.goto(PAGE_URL + '?theme=light', { waitUntil: 'networkidle0' });
+  check(
+    'light theme applies from ?theme=light',
+    await page.evaluate(() => document.documentElement.classList.contains('light')),
+  );
+  check(
+    'light theme paints light background',
+    (await page.evaluate(() => getComputedStyle(document.body).backgroundColor)) ===
+      'rgb(243, 246, 251)',
+  );
+  await page.click('#theme-toggle');
+  check(
+    'toggle switches to dark and persists',
+    await page.evaluate(
+      () =>
+        !document.documentElement.classList.contains('light') &&
+        localStorage.getItem('ba-theme') === 'dark',
+    ),
+  );
+  await page.goto(PAGE_URL, { waitUntil: 'networkidle0' });
+  check(
+    'theme persists across reload',
+    await page.evaluate(() => !document.documentElement.classList.contains('light')),
+  );
+
   check('log scale note present', (await page.$('.scale-note')) !== null);
   check('chart has decade gridlines', (await page.$$eval('.chart-tickline', (t) => t.length)) > 20);
 
@@ -440,7 +466,7 @@ try {
     'source groups collapsed by default',
     await page.$$eval('.source-group', (g) => g.every((d) => d.open === false)),
   );
-  await page.click('.source-group summary');
+  await page.$eval('.source-group summary', (s) => s.click());
   check(
     'clicking a source group summary expands it',
     await page.$eval('.source-group', (d) => d.open === true),

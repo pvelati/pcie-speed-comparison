@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "numberOfRuns": 2,
-      "url": ["http://localhost:4173/"],
+      "url": ["http://localhost:4173/", "http://localhost:4173/?theme=light"],
       "startServerCommand": "node node_modules/vite/bin/vite.js preview --port 4173 --strictPort --base=${BASE_PATH:-/}",
       "startServerReadyPattern": "Local:",
       "settings": {

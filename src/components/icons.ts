@@ -1,5 +1,5 @@
 /** Inline SVG icons for the interface families. Stroke follows currentColor. */
-export type IconName = 'pcie' | 'usb' | 'hdmi' | 'ethernet' | 'wifi' | 'memory';
+export type IconName = 'pcie' | 'usb' | 'hdmi' | 'ethernet' | 'wifi' | 'memory' | 'sun' | 'moon';
 
 /** Map data families (chart/compare names + sources-group names) to icons. */
 export const FAMILY_ICON: Record<string, IconName> = {
@@ -39,6 +39,11 @@ const PATHS: Record<IconName, string[]> = {
     'M7 16v2.5M10 16v2.5M13 16v2.5M16 16v2.5M19 16v2.5',
     'M7.5 10h3M13.5 10h3',
   ],
+  sun: [
+    'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z',
+    'M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4',
+  ],
+  moon: ['M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z'],
 };
 
 function svgEl(tag: 'svg' | 'path', attrs: Record<string, string>): SVGElement {

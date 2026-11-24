@@ -61,6 +61,9 @@ try {
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
+  // Deterministic dark theme for the SSG output (users with a light OS get
+  // light via the inline script in index.html on load).
+  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
   await page.goto(PAGE_URL, { waitUntil: 'networkidle0' });
   await page.waitForSelector('#explorer', { timeout: 10000 });
   await new Promise((r) => setTimeout(r, 250)); // let first-paint state settle
