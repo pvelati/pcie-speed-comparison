@@ -1638,3 +1638,83 @@ p {
   font-size: 13px;
   padding: 6px 12px;
 }
+
+/* --- collapsible references and explanations --- */
+
+.hideable summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.hideable summary::-webkit-details-marker {
+  display: none;
+}
+
+.hideable summary::after {
+  content: '+';
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--cyan);
+  flex: none;
+}
+
+.hideable[open] > summary::after {
+  content: '–';
+}
+
+/* card variant: provides card chrome where the host has none (source groups, lane notes) */
+.hideable-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 12px;
+}
+
+.hideable-card[open] {
+  border-color: var(--cyan);
+}
+
+.methodology > summary,
+.hideable-card > summary {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+}
+
+.hideable-card > summary::after {
+  font-size: 16px;
+}
+
+/* bare variant: inline notes that sit next to the numbers */
+.hideable-bare > summary {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+.hideable-bare > summary::after {
+  font-size: 15px;
+}
+
+.note-details {
+  margin-top: 12px;
+}
+
+.caveat-box summary {
+  align-items: baseline;
+}
+
+.caveat-body {
+  margin: 8px 0 0;
+  color: var(--muted);
+}

@@ -210,10 +210,14 @@ export function buildExamples(): HTMLElement {
     ),
     calcOut,
     el(
-      'p',
-      { class: 'caveat-box' },
-      el('strong', {}, 'This is an idealized lower bound, not a benchmark.'),
-      ' It assumes the theoretical link rate is available end-to-end. In reality, protocol overhead, the own speed of the storage device, controller limits, CPU/DRAM bandwidth, thermal throttling and the source/destination side all reduce what you actually measure.',
+      'details',
+      { class: 'caveat-box hideable', open: true },
+      el('summary', {}, el('strong', {}, 'This is an idealized lower bound, not a benchmark.')),
+      el(
+        'p',
+        { class: 'caveat-body' },
+        'It assumes the theoretical link rate is available end-to-end. In reality, protocol overhead, the own speed of the storage device, controller limits, CPU/DRAM bandwidth, thermal throttling and the source/destination side all reduce what you actually measure.',
+      ),
     ),
   );
   refreshCalc();

@@ -310,6 +310,25 @@ try {
   );
   check('source list has ≥ 20 links', srcLinks >= 20, `got ${srcLinks}`);
 
+  // -- collapsible references and explanations ----------------------------------------------
+  check(
+    'source groups collapsed by default',
+    await page.$$eval('.source-group', (g) => g.every((d) => d.open === false)),
+  );
+  await page.click('.source-group summary');
+  check(
+    'clicking a source group summary expands it',
+    await page.$eval('.source-group', (d) => d.open === true),
+  );
+  check(
+    'compare caveats are a collapsible, open by default',
+    await page.$eval('.notes-details', (d) => d.open === true),
+  );
+  check(
+    'lane reading notes collapsed by default',
+    await page.$eval('.lane-notes', (d) => d.open === false),
+  );
+
   // -- mobile 320px ------------------------------------------------------------------------
   await page.setViewport({ width: 320, height: 700 });
   await new Promise((r) => setTimeout(r, 150));

@@ -144,9 +144,9 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
   section.append(
     wrap,
     el(
-      'div',
-      { class: 'lane-notes' },
-      el('h3', {}, 'Reading the diagram'),
+      'details',
+      { class: 'lane-notes hideable hideable-card' },
+      el('summary', {}, 'Reading the diagram'),
       el(
         'ul',
         {},

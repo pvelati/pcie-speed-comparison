@@ -33,9 +33,9 @@ export function buildSources(): HTMLElement {
   );
 
   const methodology = el(
-    'div',
-    { class: 'methodology' },
-    el('h3', {}, 'PCIe generation math'),
+    'details',
+    { class: 'methodology hideable', open: true },
+    el('summary', {}, 'Methodology: how the numbers are calculated'),
     el('p', {}, 'For Gen 1–2 (NRZ, 8b/10b) the per-lane, one-direction encoded ceiling is:'),
     code('per lane (GB/s) = GT/s × (8 ÷ 10) ÷ 8'),
     el('p', {}, 'For Gen 3–5 (NRZ, 128b/130b):'),
@@ -82,9 +82,9 @@ export function buildSources(): HTMLElement {
     if (items.length === 0) continue;
     groups.append(
       el(
-        'div',
-        { class: 'source-group' },
-        el('h3', {}, family),
+        'details',
+        { class: 'source-group hideable hideable-card' },
+        el('summary', {}, `${family} (${items.length} sources)`),
         el(
           'ul',
           {},

@@ -342,7 +342,12 @@ export function buildComparison(): HTMLElement {
       },
       chart,
       scaleNote,
-      notes,
+      el(
+        'details',
+        { class: 'notes-details hideable hideable-bare', open: true },
+        el('summary', {}, 'Caveats for this family'),
+        notes,
+      ),
       roadmap,
       buildTable(rows),
     );

@@ -92,6 +92,12 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
     const laneCount = el('dd', {}, 'n/a');
     const perLane = el('dd', {}, 'n/a');
     const note = el('p', { class: 'fineprint' }, '');
+    const noteDetails = el(
+      'details',
+      { class: 'note-details hideable hideable-bare', open: true },
+      el('summary', {}, 'How this number is calculated'),
+      note,
+    );
     const metricsRoot = el('div', { class: 'panel-metrics', 'aria-live': 'polite' });
 
     Object.assign(refs, {
@@ -133,7 +139,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
         el('div', {}, el('dt', {}, 'Lanes'), laneCount),
         el('div', {}, el('dt', {}, 'Per lane, one-way'), perLane),
       ),
-      note,
+      noteDetails,
     );
 
     function refresh() {
