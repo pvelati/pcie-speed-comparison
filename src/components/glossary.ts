@@ -1,4 +1,4 @@
-/** Compact glossary: native <details>/<summary> — keyboard accessible, no JS. */
+/** Compact glossary: native <details>/<summary>, keyboard accessible, no JS. */
 import { el } from '../dom.js';
 
 const TERMS: Array<{ term: string; def: string }> = [
@@ -8,7 +8,7 @@ const TERMS: Array<{ term: string; def: string }> = [
   },
   {
     term: 'GT/s vs Gbps',
-    def: 'GT/s means giga-transfers per second — how many symbols the PHY pushes per lane per second. Gbps means gigabits per second of data. They are equal only after encoding is accounted for: PCIe 1.x/2.x lose 20% to 8b/10b encoding (2.5 GT/s ≈ 2.0 Gbps of data per lane), PCIe 3.0–5.0 lose ~1.5% to 128b/130b.',
+    def: 'GT/s means giga-transfers per second, the number of symbols the PHY pushes per lane per second. Gbps means gigabits per second of data. They are equal only after encoding is accounted for: PCIe 1.x/2.x lose 20% to 8b/10b encoding (2.5 GT/s ≈ 2.0 Gbps of data per lane), PCIe 3.0–5.0 lose ~1.5% to 128b/130b.',
   },
   {
     term: 'GB/s vs Gbps',
@@ -16,11 +16,11 @@ const TERMS: Array<{ term: string; def: string }> = [
   },
   {
     term: 'Encoding efficiency (8b/10b, 128b/130b)',
-    def: 'Line encoding adds overhead so the receiver can keep clock sync. 8b/10b sends 8 useful bits per 10 bits on the wire (80% efficient). 128b/130b sends 128 useful bits per 130 (≈98.5% efficient) — a big reason PCIe 3.0 doubled throughput at only a 1.6× rate increase.',
+    def: 'Line encoding adds overhead so the receiver can keep clock sync. 8b/10b sends 8 useful bits per 10 bits on the wire (80% efficient). 128b/130b sends 128 useful bits per 130 (≈98.5% efficient), which is why PCIe 3.0 doubled throughput at only a 1.6× rate increase.',
   },
   {
     term: 'PAM4',
-    def: 'Pulse-amplitude modulation with 4 levels: each symbol carries 2 bits instead of NRZ\u2019s 1. PCIe 6.0 and 7.0 use PAM4 to double bits-per-transfer at a given GT/s. The trade-off is a noisier signal, which is why those generations move to FLIT mode with FEC.',
+    def: 'Pulse-amplitude modulation with 4 levels: each symbol carries 2 bits instead of the 1 bit that NRZ carries. PCIe 6.0 and 7.0 use PAM4 to double bits-per-transfer at a given GT/s. The trade-off is a noisier signal, which is why those generations move to FLIT mode with FEC.',
   },
   {
     term: 'FLIT and FEC',
@@ -28,11 +28,11 @@ const TERMS: Array<{ term: string; def: string }> = [
   },
   {
     term: 'Full duplex vs bidirectional aggregate',
-    def: 'A full-duplex link sends both directions at once. If one direction carries 31.5 GB/s, the bidirectional aggregate is 63 GB/s — but no single stream ever sees more than 31.5 GB/s. This site keeps the two figures separate and labels them.',
+    def: 'A full-duplex link sends both directions at once. If one direction carries 31.5 GB/s, the bidirectional aggregate is 63 GB/s, but no single stream ever sees more than 31.5 GB/s. The site keeps the two figures separate and labels them.',
   },
   {
     term: 'PHY rate vs application throughput (goodput)',
-    def: 'The PHY rate is the physical layer\u2019s maximum. Application throughput (goodput) is what your file manager actually moves after every protocol layer, error correction, storage speed and system limits. Goodput is always lower — sometimes far lower.',
+    def: 'The PHY rate is the maximum of the physical layer. Application throughput (goodput) is what your file manager actually moves after every protocol layer, error correction, storage speed and system limits. Goodput is always lower, sometimes far lower.',
   },
   {
     term: 'Connector vs protocol vs cable',

@@ -36,7 +36,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
         { class: 'lede' },
         'Pick a generation and lane count for each link. Every figure updates instantly. ',
         el('strong', {}, 'All values are theoretical link-level ceilings'),
-        ' — specification maximums, not guaranteed application throughput.',
+        ': specification maximums, not guaranteed application throughput.',
       ),
     ),
   );
@@ -83,14 +83,14 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
 
     // -- results -------------------------------------------------------------
     const oneWayGBps = el('span', { class: 'num' }, formatRate(0));
-    const oneWayGbps = el('span', { class: 'num' }, '—');
-    const bidirGBps = el('span', { class: 'num' }, '—');
-    const bidirGbps = el('span', { class: 'num' }, '—');
-    const genLabel = el('dd', {}, '—');
-    const rawRate = el('dd', {}, '—');
-    const encoding = el('dd', {}, '—');
-    const laneCount = el('dd', {}, '—');
-    const perLane = el('dd', {}, '—');
+    const oneWayGbps = el('span', { class: 'num' }, 'n/a');
+    const bidirGBps = el('span', { class: 'num' }, 'n/a');
+    const bidirGbps = el('span', { class: 'num' }, 'n/a');
+    const genLabel = el('dd', {}, 'n/a');
+    const rawRate = el('dd', {}, 'n/a');
+    const encoding = el('dd', {}, 'n/a');
+    const laneCount = el('dd', {}, 'n/a');
+    const perLane = el('dd', {}, 'n/a');
     const note = el('p', { class: 'fineprint' }, '');
     const metricsRoot = el('div', { class: 'panel-metrics', 'aria-live': 'polite' });
 
@@ -149,7 +149,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       refs.perLane.textContent = withUnit(m.perLaneGBps, 'GB/s');
       refs.note.textContent =
         `Note: ${state.gen.calculationNote} Lane scaling: one-way = per-lane × ${state.lanes}. ` +
-        'The formula accounts for line encoding only — packet/protocol overhead and higher layers make real application payload lower.';
+        'The formula accounts for line encoding only. Packet/protocol overhead and higher layers make real application payload lower.';
 
       refs.metricsRoot.replaceChildren(
         el(
@@ -186,7 +186,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
   };
 
   // -- comparison strip (built first: each panel's initial refresh updates it) --
-  const ratioValue = el('span', { class: 'ratio' }, '—');
+  const ratioValue = el('span', { class: 'ratio' }, 'n/a');
   const stripA = el('span', { class: 'strip-val' }, '');
   const stripB = el('span', { class: 'strip-val' }, '');
   const compareStrip = el(
@@ -196,7 +196,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       'p',
       { class: 'compare-strip-title' },
       el('strong', {}, 'Link A vs Link B'),
-      el('span', {}, ' — one-way link ceiling'),
+      el('span', {}, ': one-way link ceiling'),
     ),
     el(
       'p',
@@ -225,7 +225,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
     stripB.textContent = withUnit(b.oneWayGBps, 'GB/s');
     const r = oneWayRatio(a, b);
     if (Math.abs(r - 1) < 1e-9) {
-      ratioValue.textContent = '— identical one-way ceilings';
+      ratioValue.textContent = 'identical one-way ceilings';
     } else if (r > 1) {
       ratioValue.textContent = `A is ${formatRate(r)}× B`;
     } else {

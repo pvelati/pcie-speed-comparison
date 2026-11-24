@@ -1,5 +1,5 @@
 /**
- * Pure PCIe bandwidth math. No DOM, no state — unit-testable.
+ * Pure PCIe bandwidth math. No DOM, no state, so it is unit-testable.
  *
  * Conventions:
  *  - Decimal SI units only: 1 GB = 1,000 MB, 1 GB/s = 8 Gbps.
@@ -74,7 +74,7 @@ export const DECIMAL_GIGABYTES: Readonly<Record<string, number>> = {
 /**
  * Idealized lower bound: time = bytes / (rate in bytes per second).
  * Protocol overhead, storage speed, CPU/DRAM, thermals etc. all make
- * real transfers slower — this is a floor, not a benchmark.
+ * real transfers slower. This is a floor, not a benchmark.
  */
 export function transferSeconds(bytes: number, rateGBps: number): number {
   if (bytes <= 0 || rateGBps <= 0) return Infinity;
@@ -84,7 +84,7 @@ export function transferSeconds(bytes: number, rateGBps: number): number {
 
 /** Human-readable duration. */
 export function formatDuration(totalSeconds: number): string {
-  if (!Number.isFinite(totalSeconds)) return '—';
+  if (!Number.isFinite(totalSeconds)) return 'n/a';
   if (totalSeconds < 60) return `${trimNumber(totalSeconds, 1)} s`;
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds - minutes * 60;

@@ -44,7 +44,7 @@ export function buildSources(): HTMLElement {
       {},
       'For Gen 6–7 (PAM4, FLIT mode) the NRZ formulas do not apply. Instead we use the PCI-SIG published ',
       el('strong', {}, 'x16 bidirectional maximums'),
-      ' — 256 GB/s for Gen 6 and 512 GB/s for Gen 7 — divide by two for one direction, then by sixteen for the per-lane value. These are nominal specification-level ceilings; FLIT framing and FEC overhead mean application payload is lower.',
+      'The published values are 256 GB/s for Gen 6 and 512 GB/s for Gen 7. Divide by two for one direction, then by sixteen for the per-lane value. These are nominal specification-level ceilings, and FLIT framing plus FEC overhead mean application payload is lower.',
     ),
     el('p', {}, 'For every configuration:'),
     code(
@@ -55,7 +55,7 @@ export function buildSources(): HTMLElement {
       {},
       'All units are decimal SI (1 GB = 1,000 MB). The bidirectional aggregate is always shown separately and never described as a one-way rate.',
     ),
-    el('h3', {}, 'What the numbers are — and are not'),
+    el('h3', {}, 'What the numbers are, and what they are not'),
     el(
       'ul',
       {},
@@ -70,7 +70,7 @@ export function buildSources(): HTMLElement {
         'Status tags separate ratified standards, published specifications, vendor examples and roadmap items. Roadmap values (e.g. 1.6 Tb/s Ethernet) are kept out of the ratified comparison.',
       ),
       li(
-        'A base-specification revision number (for example PCIe Base Spec 7.1) is not a new PCIe generation — the headline data rate is still PCIe 7.0 / 128.0 GT/s.',
+        'A base-specification revision number (for example PCIe Base Spec 7.1) is not a new PCIe generation: the headline data rate is still PCIe 7.0 / 128.0 GT/s.',
       ),
     ),
   );

@@ -45,8 +45,8 @@ function heroSection() {
     el(
       'p',
       { class: 'hero-sub' },
-      'Understand every lane. Interactive, source-cited bandwidth figures for PCI Express — ',
-      'placed on an honest scale next to USB, HDMI, Ethernet and Wi-Fi.',
+      'Understand every lane. Bandwidth figures for PCI Express, compared with USB, HDMI, ',
+      'Ethernet and Wi-Fi, each cited to its standard.',
     ),
     el(
       'div',
@@ -60,7 +60,7 @@ function heroSection() {
       el(
         'p',
         { class: 'hero-figure-caption' },
-        el('strong', {}, 'PCIe 7.0 ×16 — up to, bidirectional aggregate'),
+        el('strong', {}, 'PCIe 7.0 ×16, up to, bidirectional aggregate'),
         ' per PCI-SIG. Each direction carries ',
         el('strong', {}, withUnit(hero.oneWayGBps, 'GB/s')),
         '; 512 GB/s is their sum, not a one-way rate.',
@@ -89,8 +89,8 @@ function footer() {
     el(
       'p',
       {},
-      'Bandwidth Atlas — a static, single-page reference. No cookies, no tracking, no external requests: ',
-      'all data is cited in the ',
+      'Bandwidth Atlas is a static, single-page reference. No cookies, no tracking, no external requests. ',
+      'All data is cited in the ',
       el('a', { href: '#sources' }, 'sources'),
       ' section.',
     ),

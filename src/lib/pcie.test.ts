@@ -48,7 +48,7 @@ describe('perLanePerDirectionGBps', () => {
   });
 });
 
-describe('linkMetrics — known configurations', () => {
+describe('linkMetrics, known configurations', () => {
   it('Gen 1 x1: 0.25 GB/s one-way, 0.5 GB/s bidirectional, 2 Gbps one-way', () => {
     const m = linkMetrics(gen(1), 1);
     expect(m.oneWayGBps).toBeCloseTo(0.25, 12);
@@ -161,7 +161,7 @@ describe('formatDuration', () => {
     expect(formatDuration(3725)).toBe('1 h 2 min');
   });
 
-  it('infinite → em dash', () => {
-    expect(formatDuration(Infinity)).toBe('—');
+  it('infinite → n/a', () => {
+    expect(formatDuration(Infinity)).toBe('n/a');
   });
 });

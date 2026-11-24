@@ -10,7 +10,7 @@
 
 export function formatRate(value: number): string {
   const abs = Math.abs(value);
-  if (!Number.isFinite(value)) return '—';
+  if (!Number.isFinite(value)) return 'n/a';
   let out: string;
   if (abs >= 1000) {
     out = Math.round(value).toLocaleString('en-US');

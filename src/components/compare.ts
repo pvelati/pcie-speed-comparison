@@ -42,7 +42,7 @@ export function pcieChartRows(): ChartRow[] {
       displayRate: `${formatRate(m.oneWayGbps)} Gbps`,
       rateKind: 'link',
       rateMeaning: 'Theoretical one-way link ceiling per direction (×16).',
-      directionality: 'Full duplex — per-direction value shown; the aggregate would be double.',
+      directionality: 'Full duplex; per-direction value shown, the aggregate would be double.',
       status: 'standard' as RateStatus,
       caveat:
         g.family === 'pam4-flit'
@@ -107,9 +107,9 @@ function sourceLinks(ids: string[]) {
 
 const FAMILY_NOTES: Record<Exclude<Tab, 'All' | 'PCIe'>, string> = {
   USB: 'USB naming has changed repeatedly (3.0 → 3.1 → 3.2). USB-C is a connector shape, not a speed guarantee, and USB4 can dynamically share bandwidth between tunneled data and display protocols.',
-  HDMI: 'HDMI bandwidth is a display/audio signal path — not a general-purpose file-transfer interface. Its figures are not directly equivalent to PCIe application data throughput.',
+  HDMI: 'HDMI bandwidth is a display/audio signal path, not a general-purpose file-transfer interface. Its figures are not directly equivalent to PCIe application data throughput.',
   Ethernet:
-    'A nominal link rate is not application goodput. Media and PHY variants differ (twisted pair, fiber, backplane, DAC) — the speed label alone does not identify the cable or its reach.',
+    'A nominal link rate is not application goodput. Media and PHY variants differ (twisted pair, fiber, backplane, DAC), so the speed label alone does not identify the cable or its reach.',
   'Wi-Fi':
     'Wi-Fi is a shared wireless medium: PHY rates divide among all clients and depend on channel width, streams, modulation, SNR, distance, interference and regulatory domain. Never read a PHY rate as a guaranteed per-client file-transfer speed.',
 };
@@ -128,7 +128,7 @@ export function buildComparison(): HTMLElement {
         { class: 'lede' },
         'Each row is labeled with ',
         el('strong', {}, 'what the number measures'),
-        ' — signaling rate, link rate, PHY rate or theoretical ceiling — and how it is directed. This is a scale reference, not a declaration that one interface is “faster”.',
+        ': signaling rate, link rate, PHY rate or theoretical ceiling. Read this as a scale reference, not a ranking.',
       ),
     ),
   );
@@ -184,7 +184,7 @@ export function buildComparison(): HTMLElement {
     const bar = el('span', {
       class: `chart-bar bar-${row.family.toLowerCase().replace(/\s/g, '-')}`,
       style: `width:${barPct.toFixed(3)}%`,
-      title: `${row.label}: ${row.displayRate} — ${row.rateMeaning} ${row.directionality}`,
+      title: `${row.label}: ${row.displayRate}. ${row.rateMeaning} ${row.directionality}`,
     });
     track.append(bar);
     const value = el('span', { class: 'chart-value' }, row.displayRate);
@@ -243,7 +243,7 @@ export function buildComparison(): HTMLElement {
             { 'data-label': 'Status' },
             el('span', { class: `status status-${row.status}` }, STATUS_LABEL[row.status]),
           ),
-          el('td', { class: 'td-note', 'data-label': 'Note' }, row.caveat ?? '—'),
+          el('td', { class: 'td-note', 'data-label': 'Note' }, row.caveat ?? 'n/a'),
           el('td', { 'data-label': 'Source' }, sourceLinks(row.sourceIds)),
         ),
       );
@@ -254,7 +254,7 @@ export function buildComparison(): HTMLElement {
       el(
         'caption',
         { class: 'table-caption' },
-        'Reference rates — headline specification values. “Ratified standard” = approved standard; “Published spec” = published specification not yet broadly deployed; “Vendor example” = a concrete vendor product figure; “Roadmap” = future, not ratified.',
+        'Reference rates: headline specification values. Ratified standard = approved standard; Published spec = published specification not yet broadly deployed; Vendor example = a concrete vendor product figure; Roadmap = future, not ratified.',
       ),
       head,
       body,
@@ -305,14 +305,14 @@ export function buildComparison(): HTMLElement {
     const roadmap = el(
       'div',
       { class: 'roadmap-strip' },
-      el('h3', {}, 'Emerging / roadmap — not part of the ratified list above'),
+      el('h3', {}, 'Emerging / roadmap: not part of the ratified list above'),
       ...ROADMAP_ITEMS.map((item) =>
         el(
           'p',
           { class: 'roadmap-item' },
           el('span', { class: 'roadmap-label' }, item.label),
           el('span', { class: 'roadmap-rate' }, item.displayRate),
-          ' — ',
+          '. ',
           item.note,
           ' ',
           sourceLinks(item.sourceIds),

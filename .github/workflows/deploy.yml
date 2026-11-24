@@ -2,7 +2,7 @@ name: Build and deploy to GitHub Pages
 
 on:
   # Deploy on pushes to the repository's default branch (whatever it is
-  # called — checked at runtime, not hard-coded) and on manual dispatch.
+  # called, checked at runtime rather than hard-coded) and on manual dispatch.
   push:
   workflow_dispatch:
 

@@ -40,9 +40,9 @@ describe('formatRate', () => {
     expect(formatRate(12345.6)).toBe('12,346');
   });
 
-  it('non-finite → em dash', () => {
-    expect(formatRate(Infinity)).toBe('—');
-    expect(formatRate(NaN)).toBe('—');
+  it('non-finite → n/a', () => {
+    expect(formatRate(Infinity)).toBe('n/a');
+    expect(formatRate(NaN)).toBe('n/a');
   });
 
   it('withUnit appends the unit, never omits it', () => {

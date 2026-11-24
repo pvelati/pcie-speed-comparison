@@ -17,13 +17,13 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '02 · Lane visualizer'),
-      el('h2', {}, 'What “×16” actually means'),
+      el('h2', {}, 'What x16 actually means'),
       el(
         'p',
         { class: 'lede' },
         'A PCIe link is a set of parallel lanes. Each lane is a ',
         el('strong', {}, 'full-duplex pair'),
-        ' of differential signaling paths — one transmitting, one receiving. Change Link A\u2019s width in the explorer and the diagram follows.',
+        ' of differential signaling paths: one transmitting, one receiving. Change the Link A width in the explorer and the diagram follows.',
       ),
     ),
   );
@@ -89,7 +89,7 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
   function setLanes(n: number) {
     if (n === current) return;
     current = n;
-    countLabel.textContent = `×${n} — ${n} lane${n === 1 ? '' : 's'}`;
+    countLabel.textContent = `×${n}: ${n} lane${n === 1 ? '' : 's'}`;
     const height = HEADER_H + n * LANE_H + 10;
     svg.setAttribute('viewBox', `0 0 ${WIDTH} ${height}`);
     svg.setAttribute(
@@ -154,10 +154,10 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
           'A lane is a full-duplex pair of differential signaling paths: one transmit direction, one receive direction.',
         ),
         li(
-          'A link can negotiate fewer lanes — or a lower generation — than the physical slot or device maximum allows.',
+          'A link can negotiate fewer lanes, or a lower generation, than the physical slot or device maximum allows.',
         ),
         li(
-          'A connector that is physically ×16 may be wired for fewer lanes (for example ×8 or ×4) — physical slot size is not electrical lane count.',
+          'A connector that is physically ×16 may be wired for fewer lanes (for example ×8 or ×4). Physical slot size is not electrical lane count.',
         ),
         li(
           'The actual link is constrained by both endpoints, the motherboard/CPU/chipset wiring, firmware and platform topology.',

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "PCIe Speed Explorer — interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet and Wi-Fi.",
+  "description": "PCIe Speed Explorer: interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet and Wi-Fi.",
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=${BASE_PATH:-/}",

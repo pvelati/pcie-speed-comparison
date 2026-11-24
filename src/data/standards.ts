@@ -1,8 +1,8 @@
 /**
  * Spec-level reference data.
  *
- * Every number here is a maximum or headline specification rate — a
- * theoretical link/PHY ceiling — not a promise of application throughput.
+ * Every number here is a maximum or headline specification rate, i.e. a
+ * theoretical link/PHY ceiling, not a promise of application throughput.
  * `sourceIds` must reference entries in ./sources.ts.
  */
 
@@ -236,7 +236,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
       'Optional PAM4 mode: 120 Gbps in one direction while keeping 40 Gbps in the other.',
     directionality: 'Asymmetric (120 Gbps one way, 40 Gbps back).',
     status: 'published-spec',
-    caveat: 'Not 160 Gbps in each direction — the two directions are not equal in this mode.',
+    caveat: 'Not 160 Gbps in each direction; the two directions are not equal in this mode.',
     sourceIds: ['usb-80g-announcement'],
   },
 
@@ -252,7 +252,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     directionality: 'One-way (source → display), aggregate.',
     status: 'standard',
     caveat:
-      'A display/audio signal path, not a file-transfer interface — not comparable to PCIe data throughput.',
+      'A display/audio signal path, not a file-transfer interface; it is not comparable to PCIe data throughput.',
     sourceIds: ['hdmi-la-bandwidth'],
   },
   {
@@ -417,7 +417,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     rateMeaning: 'Nominal link rate per direction.',
     directionality: FD,
     status: 'standard',
-    caveat: 'Commonly over fiber or multi-lane backplane/DAC — not a single cat-6 cable story.',
+    caveat: 'Commonly over fiber or multi-lane backplane/DAC; not a single cat-6 cable story.',
     sourceIds: ['ieee-802.3-2022'],
   },
   {
@@ -454,7 +454,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     rateMeaning: 'Nominal link rate per direction (IEEE 802.3df-2024).',
     directionality: FD,
     status: 'standard',
-    caveat: 'A ratified standard capability — datacenter-class, not common in consumer PCs.',
+    caveat: 'A ratified standard capability: datacenter-class, not common in consumer PCs.',
     sourceIds: ['ieee-802.3df'],
   },
 
@@ -467,7 +467,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     displayRate: '≈ 6.9 Gbps',
     rateKind: 'PHY',
     rateMeaning: 'Theoretical max PHY rate: 8 spatial streams, 160 MHz, 256-QAM.',
-    directionality: 'Shared wireless medium — divided among all clients in the cell.',
+    directionality: 'Shared wireless medium, divided among all clients in the cell.',
     status: 'standard',
     caveat: 'A PHY ceiling, not a guaranteed per-client file-transfer speed.',
     sourceIds: ['ieee-802.11ac'],
@@ -493,7 +493,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     displayRate: '≈ 9.6 Gbps',
     rateKind: 'PHY',
     rateMeaning: 'Theoretical max PHY rate: 8 spatial streams, 160 MHz, 1024-QAM.',
-    directionality: 'Shared wireless medium — divided among all clients in the cell.',
+    directionality: 'Shared wireless medium, divided among all clients in the cell.',
     status: 'standard',
     caveat:
       '6E is the same PHY in the 6 GHz band; the band changes interference, not the PHY ceiling.',
@@ -519,7 +519,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     displayRate: '≈ 46 Gbps',
     rateKind: 'theoretical',
     rateMeaning: 'Theoretical max PHY rate: 16 spatial streams, 320 MHz, 4096-QAM.',
-    directionality: 'Shared wireless medium — divided among all clients in the cell.',
+    directionality: 'Shared wireless medium, divided among all clients in the cell.',
     status: 'standard',
     caveat:
       'Requires an extreme 16×16 access point; a normal laptop or phone cannot achieve this aggregate figure.',
@@ -541,7 +541,7 @@ export const INTERFACE_RATES: InterfaceRate[] = [
   },
 ];
 
-/** Roadmap items — deliberately kept out of the ratified comparison chart. */
+/** Roadmap items, kept out of the ratified comparison chart. */
 export interface RoadmapItem {
   id: string;
   family: InterfaceFamily;
@@ -557,7 +557,7 @@ export const ROADMAP_ITEMS: RoadmapItem[] = [
     family: 'Ethernet',
     label: '1.6 Tb/s Ethernet (1.6 TbE)',
     displayRate: '1.6 Tbps',
-    note: 'IEEE 802.3dj work in progress. Not a ratified or deployed standard — shown for scale only.',
+    note: 'IEEE 802.3dj work in progress. Not a ratified or deployed standard; shown for scale only.',
     sourceIds: ['ea-roadmap'],
   },
 ];

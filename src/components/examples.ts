@@ -24,7 +24,7 @@ export function buildExamples(): HTMLElement {
         { class: 'lede' },
         'Concrete configurations, computed from the same model as the explorer. These are ',
         el('strong', {}, 'theoretical ceilings'),
-        ' — real transfers are slower.',
+        'Real transfers are slower.',
       ),
     ),
   );
@@ -46,7 +46,7 @@ export function buildExamples(): HTMLElement {
       {},
       'Gen 4 ×4 is the common high-end NVMe connection. The 16 GT/s lanes deliver roughly ',
       el('strong', {}, `${formatRate(nvme.oneWayGBps)} GB/s per direction at the link level`),
-      ' before packet and protocol overhead. Sustained copy speeds you will see in a file manager are set by the drive\u2019s controller, its DRAM cache and the protocol stack — not by this ceiling alone.',
+      " before packet and protocol overhead. Sustained copy speeds you will see in a file manager are set by the drive's controller, its DRAM cache and the protocol stack, not by this ceiling alone.",
     ),
   );
 
@@ -74,7 +74,7 @@ export function buildExamples(): HTMLElement {
         {},
         `doubles the per-direction ceiling (${formatRate(gpu5.oneWayGBps / gpu4.oneWayGBps)}×)`,
       ),
-      ' — useful when feeding large models or 4K+ framebuffers. Remember: a physical ×16 slot may be wired for fewer lanes, and the negotiated rate depends on both ends.',
+      'Useful when feeding large models or 4K+ framebuffers. A physical ×16 slot may be wired for fewer lanes, and the negotiated rate depends on both ends.',
     ),
   );
 
@@ -128,7 +128,7 @@ export function buildExamples(): HTMLElement {
     el(
       'p',
       { class: 'fineprint' },
-      'Basis: one-way, per-direction specification ceiling (Ethernet/USB figures are their per-direction rates; Wi-Fi and HDMI are excluded here because their numbers measure different things — a shared-medium PHY rate and a display-path bandwidth, respectively).',
+      'Basis: one-way, per-direction specification ceiling (Ethernet/USB figures are their per-direction rates; Wi-Fi and HDMI are excluded here because their numbers measure different things: a shared-medium PHY rate and a display-path bandwidth, respectively).',
     ),
   );
 
@@ -141,7 +141,7 @@ export function buildExamples(): HTMLElement {
   ];
   const sizes = Object.entries(DECIMAL_GIGABYTES);
 
-  const timeOut = el('span', { class: 'num', id: 'transfer-time' }, '—');
+  const timeOut = el('span', { class: 'num', id: 'transfer-time' }, 'n/a');
   const timeSub = el('span', { class: 'metric-sub' }, '');
   const calcOut = el(
     'div',
@@ -159,7 +159,7 @@ export function buildExamples(): HTMLElement {
     const bytes = DECIMAL_GIGABYTES[activeSize];
     const secs = transferSeconds(bytes, c.metrics.oneWayGBps);
     timeOut.textContent = formatDuration(secs);
-    timeSub.textContent = `${activeSize} (decimal, 1 GB = 1,000 MB) ÷ ${withUnit(c.metrics.oneWayGBps, 'GB/s')}, one direction — time = bytes ÷ bytes per second.`;
+    timeSub.textContent = `${activeSize} (decimal, 1 GB = 1,000 MB) ÷ ${withUnit(c.metrics.oneWayGBps, 'GB/s')}, one direction. time = bytes ÷ bytes per second.`;
   }
 
   const pillGroup = (
@@ -213,7 +213,7 @@ export function buildExamples(): HTMLElement {
       'p',
       { class: 'caveat-box' },
       el('strong', {}, 'This is an idealized lower bound, not a benchmark.'),
-      ' It assumes the theoretical link rate is available end-to-end. In reality, protocol overhead, the storage device\u2019s own speed, controller limits, CPU/DRAM bandwidth, thermal throttling and the source/destination side all reduce what you actually measure.',
+      ' It assumes the theoretical link rate is available end-to-end. In reality, protocol overhead, the own speed of the storage device, controller limits, CPU/DRAM bandwidth, thermal throttling and the source/destination side all reduce what you actually measure.',
     ),
   );
   refreshCalc();

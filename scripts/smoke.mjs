@@ -43,7 +43,7 @@ server.stderr.on('data', (d) => {
   process.stderr.write(`[server] ${s}`);
   if (s.includes('already in use')) {
     server.kill();
-    console.error('Port 4173 is busy — kill the stray preview server and retry.');
+    console.error('Port 4173 is busy. Kill the stray preview server and retry.');
     process.exit(1);
   }
 });
@@ -85,7 +85,7 @@ try {
   const resp = await page.goto(PAGE_URL, { waitUntil: 'networkidle0' });
   check('page loads 200', resp.status() === 200, `(got ${resp.status()})`);
   const title = await page.title();
-  check('title is the page title', title === 'PCIe Speed Explorer — Understand Every Lane', title);
+  check('title is the page title', title === 'PCIe Speed Explorer: Understand Every Lane', title);
   check('no JS errors on load', errors.length === 0, JSON.stringify(errors));
 
   for (const id of ['explorer', 'lanes', 'compare', 'examples', 'glossary', 'sources']) {
