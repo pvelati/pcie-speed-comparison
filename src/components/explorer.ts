@@ -218,6 +218,33 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
   });
   const panelB = buildPanel('b', stateB, () => refreshCompare());
 
+  const swapBtn = el('button', { class: 'btn swap-btn', type: 'button' }, 'Swap A ↔ B');
+  swapBtn.addEventListener('click', () => {
+    const tmpGen = stateA.gen;
+    const tmpLanes = stateA.lanes;
+    stateA.gen = stateB.gen;
+    stateA.lanes = stateB.lanes;
+    stateB.gen = tmpGen;
+    stateB.lanes = tmpLanes;
+    const apply = (
+      panel: HTMLElement,
+      prefix: string,
+      state: { gen: PcieGeneration; lanes: number },
+    ) => {
+      panel
+        .querySelector<HTMLInputElement>(
+          `input[name="gen-${prefix}"][value="${state.gen.generation}"]`,
+        )
+        ?.click();
+      panel
+        .querySelector<HTMLInputElement>(`input[name="lanes-${prefix}"][value="${state.lanes}"]`)
+        ?.click();
+    };
+    apply(panelA, 'a', stateA);
+    apply(panelB, 'b', stateB);
+  });
+  compareStrip.append(el('p', { class: 'strip-actions' }, swapBtn));
+
   function refreshCompare() {
     const a = linkMetrics(stateA.gen, stateA.lanes);
     const b = linkMetrics(stateB.gen, stateB.lanes);

@@ -3,13 +3,14 @@ import { DATA_CHECKED } from '../data/standards.js';
 import { SOURCES } from '../data/sources.js';
 import { el } from '../dom.js';
 
-const FAMILY_ORDER = ['PCI Express', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi'] as const;
+const FAMILY_ORDER = ['PCI Express', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
 
 function familyOf(id: string): string {
   if (id.startsWith('pcisig')) return 'PCI Express';
   if (id.startsWith('usb')) return 'USB';
   if (id.startsWith('hdmi')) return 'HDMI';
   if (id.startsWith('ieee-802.3') || id.startsWith('ea-')) return 'Ethernet';
+  if (id.startsWith('jedec')) return 'Memory';
   return 'Wi-Fi';
 }
 

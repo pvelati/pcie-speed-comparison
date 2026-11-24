@@ -147,6 +147,44 @@ export const SOURCES: Source[] = [
     url: 'https://www.intel.com/content/www/us/en/products/details/wireless/wi-fi-7-series.html',
     supports: 'Wi-Fi 7 2×2 client-class PHY rate example (~5.8 Gbps at 320 MHz).',
   },
+  // --- Main memory (JEDEC DDR) ---
+  {
+    id: 'jedec-jesd79f',
+    name: 'JEDEC: JESD79F Double Data Rate (DDR) SDRAM standard',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd79f',
+    supports: 'DDR1 (JESD79) speed bins, top bin 400 MT/s (PC-3200).',
+  },
+  {
+    id: 'jedec-jesd79-2',
+    name: 'JEDEC: JESD79-2 DDR2 SDRAM standard',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd79-2',
+    supports: 'DDR2 speed bins, top bin 1066 MT/s (PC2-8500).',
+  },
+  {
+    id: 'jedec-jesd79-3',
+    name: 'JEDEC: JESD79-3 DDR3 SDRAM standard',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd79-3',
+    supports: 'DDR3 speed bins, top bin 2133 MT/s (PC3-17000).',
+  },
+  {
+    id: 'jedec-jesd79-4',
+    name: 'JEDEC: JESD79-4 DDR4 SDRAM standard',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd79-4',
+    supports: 'DDR4 speed bins, top bin 3200 MT/s (PC4-25600).',
+  },
+  {
+    id: 'jedec-jesd79-5',
+    name: 'JEDEC: JESD79-5 DDR5 SDRAM standard',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd79-5',
+    supports: 'DDR5 speed bins; the current top bin of 9200 MT/s.',
+  },
+  {
+    id: 'jedec-ddr6-preview',
+    name: 'JEDEC: DDR6 DRAM preview (November 2026)',
+    url: 'https://www.jedec.org/news/pressreleases/jedec%C2%AE-previews-next-generation-ddr6-dram-higher-performance-greater-capacity',
+    supports:
+      'DDR6 starting rate 12,800 MT/s on a 96-bit bus, roadmap to 14,400 MT/s and beyond, commercialization expected 2028-2029.',
+  },
 ];
 
 export const SOURCES_BY_ID: ReadonlyMap<string, Source> = new Map(SOURCES.map((s) => [s.id, s]));

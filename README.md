@@ -1,7 +1,8 @@
 # Bandwidth Atlas: PCIe Speed Explorer
 
 An interactive, single-page reference to PCI Express bandwidth (Gen 1 to 7, lane
-widths ×1 to ×32), compared with USB, HDMI, Ethernet and Wi-Fi on one scale.
+widths ×1 to ×32), compared with USB, HDMI, Ethernet, Wi-Fi and RAM (DDR1 to DDR6)
+on one scale.
 
 A connector, a protocol, a signaling rate, and real application throughput are
 not the same thing. Every number on the site says which of these it is.
@@ -10,19 +11,21 @@ not the same thing. Every number on the site says which of these it is.
 
 - **PCIe explorer**: two independent links (generation × lane width). Per-lane,
   one-way and bidirectional figures update as you change the controls. A ratio
-  strip compares the two links and states the basis of the comparison.
+  strip compares the two links (with a swap button) and states the basis of
+  the comparison.
 - **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows
   the Link A width control.
-- **Comparison chart and table**: all four external families on a logarithmic
-  scale (10 Mbps to 1 Tbps). Each row says what the number measures, its
-  directionality and its status. Roadmap items (1.6 Tb/s Ethernet) are shown
-  separately from ratified standards.
+- **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC
+  DDR1-6) on a logarithmic scale (10 Mbps to 1 Tbps), with per-category filters
+  showing row counts. Each row says what the number measures, its
+  directionality and its status. Roadmap items (1.6 Tb/s Ethernet, DDR6
+  preview) stay labeled as not ratified.
 - **Worked examples**: NVMe Gen 4 ×4, GPU ×16, a scale check against 10GbE, USB
   and USB4, and a file-transfer time calculator. Sizes are decimal GB and the
   result is labeled an idealized lower bound, not a benchmark.
 - **Glossary, methodology, sources**: plain-English terms, the exact calculation
   formulas, a "Data checked" date, and citations to standards bodies (PCI-SIG,
-  USB-IF, HDMI Forum, IEEE, Wi-Fi Alliance).
+  USB-IF, HDMI Forum, IEEE, Wi-Fi Alliance, JEDEC).
 
 Dark-navy design, system fonts, no external requests, no cookies or tracking,
 keyboard-accessible controls, `prefers-reduced-motion` respected, usable at

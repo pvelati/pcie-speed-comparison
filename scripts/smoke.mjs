@@ -138,6 +138,17 @@ try {
     strip.includes('one-way') && strip.includes('Basis'),
   );
 
+  // -- explorer: swap A/B ---------------------------------------------------------
+  await page.click('.swap-btn');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num')
+        ?.textContent === '3.938',
+  );
+  check('swap: A now shows Gen 3 x4 = 3.938 GB/s', true);
+  const strip2 = await page.$eval('.compare-strip', (n) => n.textContent);
+  check('swap: strip now shows B is 4x A', strip2.includes('B is 4× A'), strip2);
+
   // -- lane visualizer follows Link A -------------------------------------------
   const laneRows = () => page.$$eval('.lane-row', (rows) => rows.length);
   check('lane diagram shows 4 lanes for A ×4', (await laneRows()) === 4, `got ${await laneRows()}`);
@@ -184,7 +195,7 @@ try {
   const clickTab = (label) =>
     page.evaluate((l) => {
       [...document.querySelectorAll('[role="tab"]')]
-        .find((t) => t.textContent.trim() === l)
+        .find((t) => t.querySelector('.tab-label')?.textContent.trim() === l)
         ?.click();
     }, label);
 
@@ -192,11 +203,15 @@ try {
   const tableCount = () => page.$$eval('.data-table tbody tr', (r) => r.length);
 
   check(
-    'default tab "All" chart has 38 rows',
-    (await rowCount()) === 38,
+    'default tab "All" chart has 44 rows',
+    (await rowCount()) === 44,
     `got ${await rowCount()}`,
   );
-  check('"All" table has 38 rows', (await tableCount()) === 38, `got ${await tableCount()}`);
+  check('"All" table has 44 rows', (await tableCount()) === 44, `got ${await tableCount()}`);
+  check(
+    'result count shows all standards',
+    (await page.$eval('.result-count', (n) => n.textContent)) === '44 standards shown',
+  );
   check(
     'table sources are real links',
     await page.$$eval('.src-link', (a) => a.every((x) => x.href.startsWith('http'))),
@@ -227,6 +242,23 @@ try {
 
   await clickTab('PCIe');
   check('PCIe tab: 7 rows (Gen 1–7 ×16)', (await rowCount()) === 7, `got ${await rowCount()}`);
+
+  await clickTab('Memory');
+  check('Memory tab: 6 chart rows (DDR1-6)', (await rowCount()) === 6, `got ${await rowCount()}`);
+  const memText = await page.$eval('.tab-panel', (n) => n.textContent);
+  check('Memory tab: DDR5 shows 73.6 GB/s per channel', memText.includes('73.6 GB/s'));
+  check('Memory tab: DDR6 labeled roadmap', memText.includes('Roadmap'));
+  check('Memory family note present', (await page.$('.note-memory')) !== null);
+
+  // -- nav scrollspy ----------------------------------------------------------------
+  await page.evaluate(() =>
+    document.getElementById('glossary')?.scrollIntoView({ behavior: 'instant' }),
+  );
+  await new Promise((r) => setTimeout(r, 200));
+  check(
+    'nav highlights the section in view',
+    await page.$eval('.site-nav a[href="#glossary"]', (a) => a.classList.contains('active')),
+  );
 
   check('log scale note present', (await page.$('.scale-note')) !== null);
   check('chart has decade gridlines', (await page.$$eval('.chart-tickline', (t) => t.length)) > 20);

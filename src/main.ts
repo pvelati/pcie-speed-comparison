@@ -121,6 +121,40 @@ function main() {
   const root = document.getElementById('app');
   if (!root) throw new Error('#app root missing');
   root.append(app);
+
+  navScrollSpy();
+}
+
+/** Highlights the nav link of the section currently in view. */
+function navScrollSpy() {
+  const links: HTMLAnchorElement[] = [
+    ...document.querySelectorAll<HTMLAnchorElement>('.site-nav a[href^="#"]'),
+  ];
+  const sections = links
+    .map((a) => document.getElementById(a.getAttribute('href')!.slice(1)))
+    .filter((s): s is HTMLElement => s !== null);
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const line = window.innerHeight * 0.3;
+    let current: string | null = null;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= line) current = s.id;
+    }
+    links.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === `#${current}`));
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true },
+  );
+  update();
 }
 
 main();

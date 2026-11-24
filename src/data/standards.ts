@@ -108,7 +108,7 @@ export const UNCOMMON_LANES = new Set<number>([32]);
 // External interfaces
 // ---------------------------------------------------------------------------
 
-export type InterfaceFamily = 'USB' | 'HDMI' | 'Ethernet' | 'Wi-Fi';
+export type InterfaceFamily = 'USB' | 'HDMI' | 'Ethernet' | 'Wi-Fi' | 'Memory';
 export type RateKind = 'signaling' | 'link' | 'PHY' | 'theoretical';
 export type RateStatus = 'standard' | 'published-spec' | 'vendor-example' | 'roadmap';
 
@@ -538,6 +538,89 @@ export const INTERFACE_RATES: InterfaceRate[] = [
     caveat:
       'Client-class example (e.g. Intel Wi-Fi 7 2×2); real throughput depends on conditions and airtime.',
     sourceIds: ['intel-wifi7', 'ieee-802.11be'],
+  },
+  // --- Main memory (JEDEC DDR), per-channel bandwidth -------------------------
+  {
+    id: 'ddr1',
+    family: 'Memory',
+    label: 'DDR1 (PC-3200)',
+    rateGbps: 25.6,
+    displayRate: '3.2 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      'Per-channel bandwidth of a 64-bit double data rate bus at 400 MT/s per pin, the top JESD79 bin.',
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'standard',
+    sourceIds: ['jedec-jesd79f'],
+  },
+  {
+    id: 'ddr2',
+    family: 'Memory',
+    label: 'DDR2 (PC2-8500)',
+    rateGbps: 68.2,
+    displayRate: '8.53 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      'Per-channel bandwidth of a 64-bit double data rate bus at 1066 MT/s per pin, the top JESD79-2 bin.',
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'standard',
+    sourceIds: ['jedec-jesd79-2'],
+  },
+  {
+    id: 'ddr3',
+    family: 'Memory',
+    label: 'DDR3 (PC3-17000)',
+    rateGbps: 136.5,
+    displayRate: '17.07 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      'Per-channel bandwidth of a 64-bit double data rate bus at 2133 MT/s per pin, the top JESD79-3 bin.',
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'standard',
+    sourceIds: ['jedec-jesd79-3'],
+  },
+  {
+    id: 'ddr4',
+    family: 'Memory',
+    label: 'DDR4 (PC4-25600)',
+    rateGbps: 204.8,
+    displayRate: '25.6 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      'Per-channel bandwidth of a 64-bit double data rate bus at 3200 MT/s per pin, the top JESD79-4 bin.',
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'standard',
+    sourceIds: ['jedec-jesd79-4'],
+  },
+  {
+    id: 'ddr5',
+    family: 'Memory',
+    label: 'DDR5 (9200 MT/s)',
+    rateGbps: 588.8,
+    displayRate: '73.6 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      'Per-channel bandwidth of a 2x32-bit double data rate bus at 9200 MT/s per pin, the current top JESD79-5 bin.',
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'standard',
+    caveat:
+      'JEDEC base bins start at 4800 MT/s. A system multiplies the per-channel rate by its channel count (two on most desktops, more in servers).',
+    sourceIds: ['jedec-jesd79-5'],
+  },
+  {
+    id: 'ddr6',
+    family: 'Memory',
+    label: 'DDR6 (preview)',
+    rateGbps: 1228.8,
+    displayRate: '≈ 153.6 GB/s per channel',
+    rateKind: 'link',
+    rateMeaning:
+      "Per-channel bandwidth of a 96-bit double data rate bus at 12,800 MT/s per pin, the starting rate in JEDEC's November 2026 DDR6 preview.",
+    directionality: 'Shared read/write bus; total per-channel bandwidth, not a one-way figure.',
+    status: 'roadmap',
+    caveat:
+      'Standard in development: the JEDEC preview extends the roadmap to 14,400 MT/s and beyond, with commercialization expected in 2028-2029. Final details may change.',
+    sourceIds: ['jedec-ddr6-preview'],
   },
 ];
 

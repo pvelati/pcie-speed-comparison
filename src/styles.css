@@ -17,6 +17,7 @@
   --amber: #fbbf24;
   --green: #34d399;
   --violet: #c084fc;
+  --rose: #f472b6;
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   --radius: 12px;
@@ -169,6 +170,12 @@ p {
 .site-nav a:hover {
   color: var(--ink);
   background: var(--surface-2);
+}
+
+.site-nav a.active {
+  color: var(--ink);
+  background: var(--surface-2);
+  box-shadow: inset 0 -2px 0 var(--cyan);
 }
 
 /* --------------------------------------------------------------------------
@@ -830,6 +837,9 @@ p {
 .chart-row:has(.bar-wi-fi) .chart-name::before {
   background: var(--violet);
 }
+.chart-row:has(.bar-memory) .chart-name::before {
+  background: var(--rose);
+}
 
 .chart-rate {
   display: block;
@@ -881,6 +891,9 @@ p {
 .bar-wi-fi {
   background: var(--violet);
 }
+.bar-memory {
+  background: var(--rose);
+}
 
 .chart-value {
   font-family: var(--mono);
@@ -927,6 +940,9 @@ p {
 }
 .note-wifi {
   border-left-color: var(--violet);
+}
+.note-memory {
+  border-left-color: var(--rose);
 }
 
 .roadmap-strip {
@@ -1582,4 +1598,43 @@ p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* --- category filter counts, result count, explorer swap --- */
+
+.tab-label {
+  font-weight: 600;
+}
+
+.tab-count {
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  color: var(--faint);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.tab-btn.active .tab-count,
+.tab-btn[aria-selected='true'] .tab-count {
+  color: var(--ink);
+  border-color: var(--cyan);
+}
+
+.result-count {
+  margin: 8px 2px 0;
+  font-size: 12.5px;
+  color: var(--faint);
+  font-family: var(--mono);
+}
+
+.strip-actions {
+  margin: 10px 0 0;
+}
+
+.swap-btn {
+  font-size: 13px;
+  padding: 6px 12px;
 }

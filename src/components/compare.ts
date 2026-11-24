@@ -58,7 +58,11 @@ export const ALL_ROWS: ChartRow[] = [
   ...INTERFACE_RATES.map((r) => ({ ...r, rateKind: r.rateKind })),
 ].sort((a, b) => b.rateGbps - a.rateGbps);
 
-const TABS = ['All', 'PCIe', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi'] as const;
+const TABS = ['All', 'PCIe', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
+
+function countFor(tab: (typeof TABS)[number]): number {
+  return tab === 'All' ? ALL_ROWS.length : ALL_ROWS.filter((r) => r.family === tab).length;
+}
 type Tab = (typeof TABS)[number];
 
 const STATUS_LABEL: Record<RateStatus, string> = {
@@ -83,6 +87,7 @@ const ORG_SHORT: Array<[RegExp, string]> = [
   [/^ea-/, 'Ethernet Alliance'],
   [/^wifi-alliance-/, 'Wi-Fi Alliance'],
   [/^intel-/, 'Intel'],
+  [/^jedec-/, 'JEDEC'],
 ];
 
 function orgShort(id: string): string {
@@ -112,6 +117,8 @@ const FAMILY_NOTES: Record<Exclude<Tab, 'All' | 'PCIe'>, string> = {
     'A nominal link rate is not application goodput. Media and PHY variants differ (twisted pair, fiber, backplane, DAC), so the speed label alone does not identify the cable or its reach.',
   'Wi-Fi':
     'Wi-Fi is a shared wireless medium: PHY rates divide among all clients and depend on channel width, streams, modulation, SNR, distance, interference and regulatory domain. Never read a PHY rate as a guaranteed per-client file-transfer speed.',
+  Memory:
+    'DRAM bandwidth is a per-channel figure (64-bit bus; 96-bit in the DDR6 preview). A system multiplies the per-channel rate by its channel count (two on most desktops, more in servers). DRAM is a shared read/write bus: the number shown is total channel bandwidth, not a one-way rate, and pin transfer rates (MT/s) are not one-way link rates like PCIe.',
 };
 
 export function buildComparison(): HTMLElement {
@@ -122,13 +129,13 @@ export function buildComparison(): HTMLElement {
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '03 · Scale check'),
-      el('h2', {}, 'PCIe vs USB, HDMI, Ethernet and Wi-Fi'),
+      el('h2', {}, 'PCIe vs USB, HDMI, Ethernet, Wi-Fi and RAM'),
       el(
         'p',
         { class: 'lede' },
         'Each row is labeled with ',
         el('strong', {}, 'what the number measures'),
-        ': signaling rate, link rate, PHY rate or theoretical ceiling. Read this as a scale reference, not a ranking.',
+        ': signaling rate, link rate, PHY rate, theoretical ceiling, or per-channel memory bandwidth. Read this as a scale reference, not a ranking.',
       ),
     ),
   );
@@ -144,6 +151,7 @@ export function buildComparison(): HTMLElement {
     tab === 'All' ? ALL_ROWS : ALL_ROWS.filter((r) => r.family === tab);
 
   const buildTabButton = (tab: Tab, active: boolean) => {
+    const count = countFor(tab);
     const btn = el(
       'button',
       {
@@ -155,7 +163,8 @@ export function buildComparison(): HTMLElement {
         'aria-controls': `panel-${tab.toLowerCase()}`,
         tabindex: active ? '0' : '-1',
       },
-      tab,
+      el('span', { class: 'tab-label' }, tab),
+      el('span', { class: 'tab-count', 'aria-label': `${count} standards` }, String(count)),
     );
     btn.addEventListener('click', () => selectTab(tab, btn));
     return btn;
@@ -262,6 +271,7 @@ export function buildComparison(): HTMLElement {
   };
 
   let activeTab: Tab = 'All';
+  const resultCount = el('p', { class: 'result-count', 'aria-live': 'polite' }, '');
 
   function renderPanel(tab: Tab) {
     const rows = rowsFor(tab);
@@ -301,6 +311,8 @@ export function buildComparison(): HTMLElement {
       notes.append(el('p', { class: 'family-note note-eth' }, FAMILY_NOTES.Ethernet));
     if (tab === 'All' || tab === 'Wi-Fi')
       notes.append(el('p', { class: 'family-note note-wifi' }, FAMILY_NOTES['Wi-Fi']));
+    if (tab === 'All' || tab === 'Memory')
+      notes.append(el('p', { class: 'family-note note-memory' }, FAMILY_NOTES.Memory));
 
     const roadmap = el(
       'div',
@@ -339,6 +351,11 @@ export function buildComparison(): HTMLElement {
 
   function selectTab(tab: Tab, btn: HTMLButtonElement) {
     activeTab = tab;
+    const shown = rowsFor(activeTab).length;
+    resultCount.textContent =
+      shown === ALL_ROWS.length
+        ? `${shown} standards shown`
+        : `${shown} of ${ALL_ROWS.length} standards shown`;
     tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]').forEach((t) => {
       const isActive = t === btn;
       t.setAttribute('aria-selected', String(isActive));
@@ -367,7 +384,7 @@ export function buildComparison(): HTMLElement {
   for (const tab of TABS) tablist.append(buildTabButton(tab, tab === activeTab));
   selectTab(activeTab, tablist.querySelector<HTMLButtonElement>('[role="tab"]')!);
 
-  section.append(tablist, panels);
+  section.append(tablist, resultCount, panels);
   return section;
 }
 
