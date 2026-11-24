@@ -567,124 +567,6 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   Lane visualizer
-   -------------------------------------------------------------------------- */
-
-.lane-wrap {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.lane-caption {
-  margin: 0 0 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: baseline;
-  font-family: var(--mono);
-}
-
-.legend-key {
-  color: var(--faint);
-  font-size: 13px;
-}
-
-.lane-count {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--cyan);
-}
-
-.legend-hint {
-  color: var(--faint);
-  font-size: 13px;
-}
-
-.lane-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.lane-svg.tall {
-  max-height: 440px;
-}
-
-.lane-h-tx {
-  fill: var(--cyan);
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-}
-
-.lane-h-rx {
-  fill: var(--amber);
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-}
-
-.lane-box {
-  fill: rgba(96, 165, 250, 0.05);
-  stroke: var(--line);
-}
-
-.lane-tx {
-  stroke: var(--cyan);
-  stroke-width: 2;
-  opacity: 0.45;
-}
-
-.lane-rx {
-  stroke: var(--amber);
-  stroke-width: 2;
-  opacity: 0.45;
-}
-
-/* Animated data flow over the lane arrows (direction comes from path
-   geometry: TX paths run left->right, RX paths right->left). */
-
-.lane-flow {
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 10 30;
-  opacity: 0.9;
-}
-
-.lane-flow-tx {
-  stroke: var(--cyan);
-}
-
-.lane-flow-rx {
-  stroke: var(--amber);
-}
-
-.lane-notes {
-  margin-top: 22px;
-  max-width: 760px;
-}
-
-.lane-notes h3 {
-  font-size: 18px;
-}
-
-.lane-notes ul {
-  margin: 0;
-  padding-left: 20px;
-  color: var(--muted);
-}
-
-.lane-notes li {
-  margin-bottom: 8px;
-}
-
-.lane-notes li::marker {
-  color: var(--cyan);
-}
-
-/* --------------------------------------------------------------------------
    Comparison
    -------------------------------------------------------------------------- */
 
@@ -2220,14 +2102,6 @@ input {
    ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
-  .lane-flow {
-    animation: lane-flow 1.4s linear infinite;
-  }
-
-  .lane-row {
-    animation: lane-in 0.3s ease-out both;
-  }
-
   .hero::before {
     animation: hero-pulse 9s ease-in-out infinite;
   }
@@ -2241,26 +2115,6 @@ input {
 
   .hero-chip:hover {
     transform: translateY(-1px);
-  }
-}
-
-/* Reduced motion: hide the dashed overlay so the static arrows stay clean. */
-@media (prefers-reduced-motion: reduce) {
-  .lane-flow {
-    display: none;
-  }
-}
-
-@keyframes lane-flow {
-  to {
-    stroke-dashoffset: -80;
-  }
-}
-
-@keyframes lane-in {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
   }
 }
 

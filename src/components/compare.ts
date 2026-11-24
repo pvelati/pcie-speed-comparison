@@ -134,7 +134,7 @@ export function buildComparison(
     el(
       'div',
       { class: 'section-head' },
-      el('p', { class: 'eyebrow' }, '03 · Scale check'),
+      el('p', { class: 'eyebrow' }, '02 · Scale check'),
       el(
         'h2',
         {},

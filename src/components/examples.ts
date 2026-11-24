@@ -17,7 +17,7 @@ export function buildExamples(): HTMLElement {
     el(
       'div',
       { class: 'section-head' },
-      el('p', { class: 'eyebrow' }, '04 · Practical examples'),
+      el('p', { class: 'eyebrow' }, '03 · Practical examples'),
       el('h2', {}, w('What these numbers'), ' ', w('buy you')),
       el(
         'p',

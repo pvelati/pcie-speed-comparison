@@ -47,7 +47,7 @@ export function buildGlossary(): HTMLElement {
     el(
       'div',
       { class: 'section-head' },
-      el('p', { class: 'eyebrow' }, '05 · Terms'),
+      el('p', { class: 'eyebrow' }, '04 · Terms'),
       el('h2', {}, w('Explain the terms')),
       el(
         'p',

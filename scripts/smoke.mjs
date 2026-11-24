@@ -2,7 +2,7 @@
  * Headless browser smoke test.
  * Serves the production build with `vite preview`, then drives the real page
  * with Chromium: clicks every explorer control, checks computed figures,
- * lane diagram counts, tabs, the calculator, mobile overflow and the 404.
+ * tabs, the calculator, mobile overflow and the 404.
  *
  * Usage: node scripts/smoke.mjs [base]   (base defaults to "/")
  */
@@ -93,7 +93,7 @@ try {
     rawHtml.includes('id="explorer"') && rawHtml.includes('Last updated:'),
   );
 
-  for (const id of ['explorer', 'lanes', 'compare', 'examples', 'glossary', 'sources']) {
+  for (const id of ['explorer', 'compare', 'examples', 'glossary', 'sources']) {
     check(`section #${id} exists`, Boolean(await page.$(`#${id}`)));
   }
 
@@ -189,22 +189,6 @@ try {
       document.querySelector('#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num')
         ?.textContent === '3.938',
   );
-
-  // -- lane visualizer follows Link A -------------------------------------------
-  const laneRows = () => page.$$eval('.lane-row', (rows) => rows.length);
-  check('lane diagram shows 4 lanes for A ×4', (await laneRows()) === 4, `got ${await laneRows()}`);
-  await clickRadio('lanes-a', '32');
-  await page.waitForFunction(() => document.querySelectorAll('.lane-row').length === 32);
-  check('lane diagram shows 32 lanes for A ×32', true);
-  check(
-    'lane svg has updated accessible label',
-    (await page.$eval('.lane-svg', (s) => s.getAttribute('aria-label') ?? '')).includes(
-      '32 parallel',
-    ),
-  );
-  await clickRadio('lanes-a', '16');
-  await page.waitForFunction(() => document.querySelectorAll('.lane-row').length === 16);
-  check('lane diagram shows 16 lanes for A ×16', true);
 
   // -- explorer: Gen 7 ×16 = 256 GB/s one-way / 512 bidirectional ----------------
   await clickRadio('gen-a', '7');
@@ -547,10 +531,6 @@ try {
   check(
     'compare caveats are a collapsible, open by default',
     await page.$eval('.notes-details', (d) => d.open === true),
-  );
-  check(
-    'lane reading notes collapsed by default',
-    await page.$eval('.lane-notes', (d) => d.open === false),
   );
 
   // -- mobile 320px ------------------------------------------------------------------------

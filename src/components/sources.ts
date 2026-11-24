@@ -22,7 +22,7 @@ export function buildSources(): HTMLElement {
     el(
       'div',
       { class: 'section-head' },
-      el('p', { class: 'eyebrow' }, '06 · Sources & methodology'),
+      el('p', { class: 'eyebrow' }, '05 · Sources & methodology'),
       el('h2', {}, w('How these numbers'), ' ', w('are calculated')),
       el(
         'p',

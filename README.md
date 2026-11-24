@@ -7,7 +7,6 @@ A connector, a protocol, a signaling rate, and real application throughput are n
 ## Features
 
 - **PCIe explorer**: two independent links (generation × lane width). Per-lane, one-way and bidirectional figures update as you change the controls. A ratio strip compares the two links (with a swap button) and states the basis of the comparison. A protocol-overhead slider (0-40%, with quick presets and spec-derived typical values per family) shows what sustained payload looks like after protocol overhead.
-- **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows the Link A width control, with animated data flow showing transmit and receive moving at the same time on every lane (static arrows under `prefers-reduced-motion`).
 - **Shareable state**: the explorer, cross-standard comparison and active filter live in the URL hash, so any view can be copied as a link.
 - **Machine-readable data**: `data.json` (all rates, meanings, caveats, source IDs) is generated from the typed data model at build time, and `llms.txt` points to it.
 - **Light and dark themes**: follows the OS preference, with a persistent toggle in the header (`?theme=light|dark` also works); print stylesheet included.
@@ -40,7 +39,7 @@ npm run preview          # serve the production build
 ```bash
 npm run check            # prettier --check + eslint + tsc --noEmit + vitest
 npm run build            # production build (includes data.json, prerender)
-npm run smoke            # headless Chromium UI test of the build (92 checks)
+npm run smoke            # headless Chromium UI test of the build (86 checks)
 npm run smoke /my-repo/  # same, for a subpath build
 npm run lighthouse       # Lighthouse CI: perf >= 90, a11y >= 95, seo >= 95, BP >= 85
 ```
@@ -93,11 +92,11 @@ src/data/sources.ts           source registry
 src/lib/pcie.ts               pure PCIe/transfer math (+ tests)
 src/lib/format.ts             display rounding (+ tests)
 src/lib/logscale.ts           log-scale math (+ tests)
-src/components/               explorer, lanes, compare, crosslink, icons,
+src/components/               explorer, compare, crosslink, icons,
                               examples, glossary, sources
 scripts/prerender.mjs         SSG step (renders built page into index.html)
 scripts/generate-data.mjs     data.json generator (build step)
-scripts/smoke.mjs             headless-browser UI smoke test (92 checks)
+scripts/smoke.mjs             headless-browser UI smoke test (86 checks)
 .github/workflows/deploy.yml  Pages deploy (check + build + Lighthouse)
 .github/workflows/ci.yml      PR gate (check + Lighthouse)
 .lighthouserc.json            Lighthouse CI config (both themes, 2 runs each)

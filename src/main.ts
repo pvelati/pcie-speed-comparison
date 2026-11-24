@@ -7,7 +7,6 @@ import type { ExplorerState } from './components/explorer.js';
 import type { CrossLinkState } from './components/crosslink.js';
 import { ALL_ROWS, TABS } from './components/compare.js';
 import { familyIcon, FAMILY_ICON, logoMark } from './components/icons.js';
-import { buildLaneVisualizer } from './components/lanes.js';
 import { buildComparison } from './components/compare.js';
 import { buildExamples } from './components/examples.js';
 import { buildGlossary } from './components/glossary.js';
@@ -89,7 +88,6 @@ function header() {
       'nav',
       { class: 'site-nav', 'aria-label': 'Page sections' },
       el('a', { href: '#explorer' }, 'Explorer'),
-      el('a', { href: '#lanes' }, 'Lanes'),
       el('a', { href: '#compare' }, 'Compare'),
       el('a', { href: '#examples' }, 'Examples'),
       el('a', { href: '#glossary' }, 'Terms'),
@@ -228,8 +226,6 @@ function serializeHash(ex: ExplorerState, cl: CrossLinkState, tab: string): stri
 }
 
 function main() {
-  const lanes = buildLaneVisualizer();
-
   let tab = 'All';
   let raf = 0;
   const scheduleHash = () => {
@@ -243,7 +239,7 @@ function main() {
     });
   };
 
-  const explorer = buildExplorer((lanesCount) => lanes.setLanes(lanesCount), scheduleHash);
+  const explorer = buildExplorer(scheduleHash);
   const cross = buildCrossLink(scheduleHash);
   const comparison = buildComparison(cross, (name) => {
     tab = name;
@@ -259,7 +255,6 @@ function main() {
       { id: 'main' },
       heroSection(),
       explorer.root,
-      lanes.section,
       comparison,
       buildExamples(),
       buildGlossary(),

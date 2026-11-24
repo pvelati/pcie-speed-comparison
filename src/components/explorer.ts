@@ -36,10 +36,7 @@ export interface ExplorerHandle {
   set: (s: Partial<ExplorerState>) => void;
 }
 
-export function buildExplorer(
-  onLinkAChange: (lanes: number) => void,
-  onStateChange?: () => void,
-): ExplorerHandle {
+export function buildExplorer(onStateChange?: () => void): ExplorerHandle {
   const section = el(
     'section',
     { id: 'explorer', class: 'section explorer' },
@@ -259,10 +256,7 @@ export function buildExplorer(
     ),
   );
 
-  const panelA = buildPanel('a', stateA, () => {
-    onLinkAChange(stateA.lanes);
-    refreshCompare();
-  });
+  const panelA = buildPanel('a', stateA, () => refreshCompare());
   const panelB = buildPanel('b', stateB, () => refreshCompare());
 
   const swapBtn = el('button', { class: 'btn swap-btn', type: 'button' }, 'Swap A ↔ B');
