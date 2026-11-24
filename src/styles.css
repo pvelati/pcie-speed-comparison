@@ -1864,6 +1864,12 @@ input {
   min-width: 0;
 }
 
+.cross-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .cross-label {
   font-family: var(--mono);
   font-size: 12px;
@@ -2066,6 +2072,7 @@ input {
   .overhead-control,
   .cross-overhead,
   .cross-presets,
+  .cross-channels,
   .pill-group,
   .preset-btn,
   .seg,

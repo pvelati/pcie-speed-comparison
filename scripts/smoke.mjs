@@ -215,7 +215,7 @@ try {
   );
   check(
     'RAM chip shows its standard count',
-    (await page.$eval('.chip-memory .chip-count', (n) => n.textContent)) === '6',
+    (await page.$eval('.chip-memory .chip-count', (n) => n.textContent)) === '12',
   );
   await page.click('.chip-memory');
   await new Promise((r) => setTimeout(r, 150));
@@ -249,14 +249,14 @@ try {
   const tableCount = () => page.$$eval('.data-table tbody tr', (r) => r.length);
 
   check(
-    'default tab "All" chart has 44 rows',
-    (await rowCount()) === 44,
+    'default tab "All" chart has 50 rows',
+    (await rowCount()) === 50,
     `got ${await rowCount()}`,
   );
-  check('"All" table has 44 rows', (await tableCount()) === 44, `got ${await tableCount()}`);
+  check('"All" table has 50 rows', (await tableCount()) === 50, `got ${await tableCount()}`);
   check(
     'result count shows all standards',
-    (await page.$eval('.result-count', (n) => n.textContent)) === '44 standards shown',
+    (await page.$eval('.result-count', (n) => n.textContent)) === '50 standards shown',
   );
   check(
     'table sources are real links',
@@ -294,9 +294,14 @@ try {
   );
 
   await clickTab('Memory');
-  check('Memory tab: 6 chart rows (DDR1-6)', (await rowCount()) === 6, `got ${await rowCount()}`);
+  check(
+    'Memory tab: 12 chart rows (DDR1-6, HBM1-4)',
+    (await rowCount()) === 12,
+    `got ${await rowCount()}`,
+  );
   const memText = await page.$eval('.tab-panel', (n) => n.textContent);
-  check('Memory tab: DDR5 shows 73.6 GB/s per channel', memText.includes('73.6 GB/s'));
+  check('Memory tab: DDR5 shows 9200 MT/s', memText.includes('9200 MT/s'));
+  check('Memory tab: HBM4 shows 2048 GB/s per stack', memText.includes('2048 GB/s per stack'));
   check('Memory tab: DDR6 labeled future', memText.includes('Future, not released'));
   check('Memory family note present', (await page.$('.note-memory')) !== null);
 
@@ -320,6 +325,43 @@ try {
     'crosslink A shows 73.6 GB/s (DDR5 per channel)',
     (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('73.6'),
   );
+  await page.evaluate(() => {
+    const r = document.querySelector('#cross-ch-a-4');
+    r.checked = true;
+    r.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  check(
+    'crosslink DDR5 x4 channels shows 294.4 GB/s',
+    (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('294.4'),
+  );
+  check(
+    'crosslink subline notes x4 channels',
+    (await page.$eval('.cross-side .cross-sub', (n) => n.textContent)).includes('x4 channels'),
+  );
+  await page.evaluate(() => {
+    const sel = document.querySelector('#cross-a');
+    sel.value = 'hbm3';
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    const r = document.querySelector('#cross-ch-a-2');
+    r.checked = true;
+    r.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  check(
+    'crosslink HBM3 x2 stacks shows 1,638 GB/s',
+    (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('1,638'),
+  );
+  check(
+    'crosslink subline notes x2 stacks',
+    (await page.$eval('.cross-side .cross-sub', (n) => n.textContent)).includes('x2 stacks'),
+  );
+  await page.evaluate(() => {
+    const sel = document.querySelector('#cross-a');
+    sel.value = 'ddr5';
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    const r1 = document.querySelector('#cross-ch-a-1');
+    r1.checked = true;
+    r1.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await page.evaluate(() => {
     const r = document.querySelector('#cross-unit-gbit');
     r.checked = true;

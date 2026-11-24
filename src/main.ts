@@ -187,6 +187,10 @@ function parseHash(hash: string): {
   if (coa !== undefined) out.cross.ohA = coa;
   const cob = inRange('cob', 0, 40);
   if (cob !== undefined) out.cross.ohB = cob;
+  const cha = inRange('cha', 1, 8);
+  if (cha !== undefined && CHANNELS.includes(cha)) out.cross.chA = cha;
+  const chb = inRange('chb', 1, 8);
+  if (chb !== undefined && CHANNELS.includes(chb)) out.cross.chB = chb;
   const u = p.get('u');
   if (u && UNITS.includes(u)) out.cross.unit = u;
   const t = p.get('t');
@@ -204,11 +208,15 @@ const D = {
   overhead: 0,
   a: 'ddr5',
   ohA: 0,
+  chA: 1,
   b: 'pcie-4',
   ohB: 10,
+  chB: 1,
   unit: 'gbps',
   tab: 'All',
 };
+
+const CHANNELS = [1, 2, 4, 8];
 
 /** Only non-default fields go into the hash; '' when everything is default. */
 function serializeHash(ex: ExplorerState, cl: CrossLinkState, tab: string): string {
@@ -220,6 +228,8 @@ function serializeHash(ex: ExplorerState, cl: CrossLinkState, tab: string): stri
   if (cl.ohA !== D.ohA) p.set('coa', String(cl.ohA));
   if (cl.b !== D.b) p.set('cb', cl.b);
   if (cl.ohB !== D.ohB) p.set('cob', String(cl.ohB));
+  if (cl.chA !== D.chA) p.set('cha', String(cl.chA));
+  if (cl.chB !== D.chB) p.set('chb', String(cl.chB));
   if (cl.unit !== D.unit) p.set('u', cl.unit);
   if (tab !== D.tab) p.set('t', tab);
   return p.toString();

@@ -1,7 +1,7 @@
 {
   "name": "bandwidth-atlas",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "description": "PCIe Speed Explorer: interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet, Wi-Fi and JEDEC DDR RAM. Static, cited, no tracking.",
   "license": "MIT",

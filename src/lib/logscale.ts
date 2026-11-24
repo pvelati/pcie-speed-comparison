@@ -5,7 +5,7 @@
  */
 
 export const CHART_MIN_GBPS = 0.01; // 10 Mbps
-export const CHART_MAX_GBPS = 4000; // just past the 2048 Gbps top bar
+export const CHART_MAX_GBPS = 20000; // just past the 16384 Gbps HBM4 top bar
 
 export function logPosition(gbps: number, min = CHART_MIN_GBPS, max = CHART_MAX_GBPS): number {
   const clamped = Math.min(Math.max(gbps, min), max);
@@ -20,4 +20,5 @@ export const CHART_TICKS: Array<{ value: number; label: string }> = [
   { value: 10, label: '10 Gbps' },
   { value: 100, label: '100 Gbps' },
   { value: 1000, label: '1 Tbps' },
+  { value: 10000, label: '10 Tbps' },
 ];

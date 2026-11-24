@@ -1,6 +1,6 @@
 # Bandwidth Atlas (PCIe Speed Explorer)
 
-> A static reference for interface bandwidth: PCIe Gen 1-7 (any lane width), USB, HDMI, Ethernet, Wi-Fi, and JEDEC DDR1-6 RAM per channel. Every figure is cited to its standard. Decimal SI units (1 GB = 1,000,000,000 bytes). Data last checked: 24 November 2026.
+> A static reference for interface bandwidth: PCIe Gen 1-7 (any lane width), USB, HDMI, Ethernet, Wi-Fi, and JEDEC RAM (DDR1-6 per channel, HBM1-4 per stack). Every figure is cited to its standard. Decimal SI units (1 GB = 1,000,000,000 bytes). Data last checked: 24 November 2026.
 
 ## Data
 - data.json: machine-readable rate table (PCIe generations, all interface rates, what each rate measures, directionality, status, caveats, source IDs)

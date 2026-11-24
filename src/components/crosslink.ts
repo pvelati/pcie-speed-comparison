@@ -34,13 +34,16 @@ function byId(id: string): ChartRow {
 interface SideState {
   row: ChartRow;
   overhead: number;
+  channels: number;
 }
 
 export interface CrossLinkState {
   a: string;
   ohA: number;
+  chA: number;
   b: string;
   ohB: number;
+  chB: number;
   unit: string;
 }
 
@@ -50,11 +53,13 @@ export interface CrossLinkHandle {
   set: (s: Partial<CrossLinkState>) => void;
 }
 
+const CHANNEL_COUNTS = [1, 2, 4, 8];
+
 export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
   let unit: Unit = UNITS[0];
   const state: Record<'a' | 'b', SideState> = {
-    a: { row: byId('ddr5'), overhead: DEFAULT_OVERHEAD.Memory },
-    b: { row: byId('pcie-4'), overhead: DEFAULT_OVERHEAD.PCIe },
+    a: { row: byId('ddr5'), overhead: DEFAULT_OVERHEAD.Memory, channels: 1 },
+    b: { row: byId('pcie-4'), overhead: DEFAULT_OVERHEAD.PCIe, channels: 1 },
   };
 
   const buildSide = (id: 'a' | 'b') => {
@@ -111,9 +116,46 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
       b.addEventListener('click', () => applyOverhead(Number(b.getAttribute('data-value'))));
     }
     range.addEventListener('input', () => applyOverhead(Number(range.value)));
+    const channelBox = el('div', {
+      class: 'cross-channels',
+      role: 'group',
+      'aria-label': `Memory channel count for side ${id.toUpperCase()}`,
+    });
+    for (const n of CHANNEL_COUNTS) {
+      const input = el('input', {
+        type: 'radio',
+        name: `cross-ch-${id}`,
+        value: String(n),
+        id: `cross-ch-${id}-${n}`,
+        checked: n === 1,
+      });
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          state[id].channels = n;
+          refresh();
+        }
+      });
+      channelBox.append(
+        el('label', { class: 'pill', for: `cross-ch-${id}-${n}` }, input, el('span', {}, `x${n}`)),
+      );
+    }
+    const syncChannels = () => {
+      const isMemory = state[id].row.family === 'Memory';
+      channelBox.hidden = !isMemory;
+      if (!isMemory) {
+        state[id].channels = 1;
+        channelBox.querySelector<HTMLInputElement>('input[value="1"]')?.click();
+      }
+      channelBox.setAttribute(
+        'aria-label',
+        `Memory ${state[id].row.id.startsWith('hbm') ? 'stack' : 'channel'} count for side ${id.toUpperCase()}`,
+      );
+    };
+    syncChannels();
     select.addEventListener('change', () => {
       state[id].row = byId(select.value);
       applyOverhead(DEFAULT_OVERHEAD[state[id].row.family] ?? 0);
+      syncChannels();
     });
 
     const side = el(
@@ -121,6 +163,7 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
       { class: 'cross-side' },
       el('label', { for: `cross-${id}`, class: 'cross-label' }, `${id.toUpperCase()} · standard`),
       select,
+      channelBox,
       el('div', { class: 'cross-overhead' }, range, pct),
       presetsBox,
       el('div', { class: 'cross-value', 'aria-live': 'polite' }, num, unitEl),
@@ -158,13 +201,23 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
       [a, state.a],
       [b, state.b],
     ] as const) {
-      const eff = s.row.rateGbps * (1 - s.overhead / 100);
+      const mult = s.row.family === 'Memory' ? s.channels : 1;
+      const eff = s.row.rateGbps * (1 - s.overhead / 100) * mult;
       side.num.textContent = formatRate(unit.factor(eff));
       side.unitEl.textContent = unit.label;
-      side.sub.textContent = `${s.row.label}: ${s.row.displayRate} spec value · ${STATUS_LABEL[s.row.status]} · ${s.overhead}% overhead applied`;
+      const word = s.row.id.startsWith('hbm') ? 'stacks' : 'channels';
+      const multPart =
+        s.row.family === 'Memory' && s.channels > 1 ? ` · x${s.channels} ${word}` : '';
+      side.sub.textContent = `${s.row.label}: ${s.row.displayRate} spec value · ${STATUS_LABEL[s.row.status]}${multPart} · ${s.overhead}% overhead applied`;
     }
-    const ea = state.a.row.rateGbps * (1 - state.a.overhead / 100);
-    const eb = state.b.row.rateGbps * (1 - state.b.overhead / 100);
+    const ea =
+      state.a.row.rateGbps *
+      (1 - state.a.overhead / 100) *
+      (state.a.row.family === 'Memory' ? state.a.channels : 1);
+    const eb =
+      state.b.row.rateGbps *
+      (1 - state.b.overhead / 100) *
+      (state.b.row.family === 'Memory' ? state.b.channels : 1);
     const r = ea / eb;
     if (Math.abs(r - 1) < 0.005) {
       ratio.textContent = 'nearly identical';
@@ -187,7 +240,7 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
         'p',
         { class: 'cross-note' },
         "Pick a standard for each side. Overhead starts at the family's typical default on selection; adjust it with the slider (0-40%, 1% steps) or the preset buttons. ",
-        'PCIe rows are ×16 one-way link ceilings; RAM rows are per-channel bandwidth; the other families are headline spec rates. The ratio uses the overhead-adjusted values.',
+        'PCIe rows are ×16 one-way link ceilings. RAM rows are per-channel bandwidth for DDR and per-stack bandwidth for HBM; the ×N buttons multiply by channel (DDR) or stack (HBM) count. Other families are headline spec rates. The ratio uses the adjusted values.',
       ),
       el(
         'div',
@@ -200,12 +253,14 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
     get: () => ({
       a: state.a.row.id,
       ohA: state.a.overhead,
+      chA: state.a.channels,
       b: state.b.row.id,
       ohB: state.b.overhead,
+      chB: state.b.channels,
       unit: unit.id,
     }),
     set: (s) => {
-      const applySide = (id: 'a' | 'b', rowId?: string, oh?: number) => {
+      const applySide = (id: 'a' | 'b', rowId?: string, oh?: number, ch?: number) => {
         const side = id === 'a' ? a : b;
         const sel = side.side.querySelector('select');
         if (rowId && sel) {
@@ -216,9 +271,20 @@ export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
           }
         }
         if (oh !== undefined) side.applyOverhead(oh);
+        if (ch !== undefined) {
+          const input = side.side.querySelector<HTMLInputElement>(
+            `input[name="cross-ch-${id}"][value="${ch}"]`,
+          );
+          if (input && !input.checked) {
+            input.checked = true;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
       };
-      if (s.a !== undefined || s.ohA !== undefined) applySide('a', s.a, s.ohA);
-      if (s.b !== undefined || s.ohB !== undefined) applySide('b', s.b, s.ohB);
+      if (s.a !== undefined || s.ohA !== undefined || s.chA !== undefined)
+        applySide('a', s.a, s.ohA, s.chA);
+      if (s.b !== undefined || s.ohB !== undefined || s.chB !== undefined)
+        applySide('b', s.b, s.ohB, s.chB);
       if (s.unit !== undefined) {
         const input = document.querySelector<HTMLInputElement>(`#cross-unit-${s.unit}`);
         if (input && !input.checked) {

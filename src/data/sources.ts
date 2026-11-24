@@ -179,6 +179,45 @@ export const SOURCES: Source[] = [
     supports: 'DDR5 speed bins; the current top bin of 9200 MT/s.',
   },
   {
+    id: 'jedec-jesd235',
+    name: 'JEDEC: JESD235 High Bandwidth Memory (HBM) DRAM standard (2013)',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd235',
+    supports: 'HBM1: 1024-bit stack interface, 1000 MT/s per pin, 128 GB/s per stack.',
+  },
+  {
+    id: 'jedec-jesd235a',
+    name: 'JEDEC: JESD235a High Bandwidth Memory 2 (HBM2) standard (2016)',
+    url: 'https://www.jedec.org/standards-documents/docs/jesd235a',
+    supports: 'HBM2: 2000 MT/s per pin, 256 GB/s per 1024-bit stack.',
+  },
+  {
+    id: 'jedec-hbm2e-update',
+    name: 'JEDEC: HBM2E update to the HBM standard press release (December 2018)',
+    url: 'https://www.jedec.org/news/pressreleases/jedec-updates-groundbreaking-high-bandwidth-memory-hbm-standard-0',
+    supports: 'HBM2E: specification maximum 2400 MT/s per pin (307 GB/s per 1024-bit stack).',
+  },
+  {
+    id: 'jedec-hbm3',
+    name: 'JEDEC: HBM3 press release (January 2022)',
+    url: 'https://www.jedec.org/news/pressreleases/jedec-publishes-hbm3-update-to-high-bandwidth-memory-hbm-standard',
+    supports:
+      'HBM3: 6400 MT/s per pin, 819 GB/s per 1024-bit stack; HBM3E is an update of this standard family.',
+  },
+  {
+    id: 'jedec-hbm4',
+    name: 'JEDEC: JESD270-4 HBM4 press release (April 2025)',
+    url: 'https://www.jedec.org/news/pressreleases/jedec%C2%AE-and-industry-leaders-collaborate-release-jesd270-4-hbm4-standard-advancing',
+    supports:
+      'HBM4: 2048-bit interface, up to 8000 MT/s per pin, 2048 GB/s per stack, 4-16 layer stacks up to 64 GB.',
+  },
+  {
+    id: 'ieee-802.11bn',
+    name: 'IEEE: P802.11bn draft standard, Ultra High Reliability (Wi-Fi 8)',
+    url: 'https://standards.ieee.org/ieee/802.11bn/11393/',
+    supports:
+      'Wi-Fi 8 (802.11bn) is an active draft: +25% throughput, -25% latency, -25% MPDU loss targets versus 802.11be; no ratified PHY rate.',
+  },
+  {
     id: 'jedec-ddr6-preview',
     name: 'JEDEC: DDR6 DRAM preview (November 2026)',
     url: 'https://www.jedec.org/news/pressreleases/jedec%C2%AE-previews-next-generation-ddr6-dram-higher-performance-greater-capacity',

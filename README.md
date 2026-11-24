@@ -1,6 +1,6 @@
 # Bandwidth Atlas: PCIe Speed Explorer
 
-An interactive, single-page reference to PCI Express bandwidth (Gen 1 to 7, lane widths ×1 to ×32), compared with USB, HDMI, Ethernet, Wi-Fi and RAM (DDR1 to DDR6) on one scale.
+An interactive, single-page reference to PCI Express bandwidth (Gen 1 to 7, lane widths ×1 to ×32), compared with USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC DDR1-6 and HBM1-4) on one scale.
 
 A connector, a protocol, a signaling rate, and real application throughput are not the same thing. Every number on the site says which of these it is.
 
@@ -10,8 +10,8 @@ A connector, a protocol, a signaling rate, and real application throughput are n
 - **Shareable state**: the explorer, cross-standard comparison and active filter live in the URL hash, so any view can be copied as a link.
 - **Machine-readable data**: `data.json` (all rates, meanings, caveats, source IDs) is generated from the typed data model at build time, and `llms.txt` points to it.
 - **Light and dark themes**: follows the OS preference, with a persistent toggle in the header (`?theme=light|dark` also works); print stylesheet included.
-- **Cross-standard comparison**: any two standards against each other (for example DDR5 vs PCIe 4.0 x16), with a unit switch (MB/s, GB/s, Gbps, TB/s) and per-side overhead: clickable presets that apply each family's typical default, plus a fine-grained slider (0-40%, 1% steps).
-- **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC DDR1-6) on a logarithmic scale (10 Mbps to 1 Tbps), with per-category filters (each with an inline SVG icon and row count). Each row says what the number measures, its directionality and its status. Future items (PCIe 6.0/7.0, DDR6) are labeled "Future, not released".
+- **Cross-standard comparison**: any two standards against each other (for example DDR5 vs PCIe 4.0 x16), with a unit switch (MB/s, GB/s, Gbps, TB/s) and per-side overhead: clickable presets that apply each family's typical default, plus a fine-grained slider (0-40%, 1% steps), and per-side DDR channel / HBM stack count (x1, x2, x4, x8).
+- **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC DDR1-6 and HBM1-4) on a logarithmic scale (10 Mbps to 10 Tbps), with per-category filters (each with an inline SVG icon and row count). Each row says what the number measures, its directionality and its status. Future items (PCIe 6.0/7.0, DDR6) are labeled "Future, not released".
 - **Prerendered HTML**: the build step renders the page in headless Chromium and serializes the DOM into `dist/index.html`, so first paint needs no JavaScript (fast LCP, works with JS off, indexable); the script then swaps in the interactive version.
 - **Worked examples**: NVMe Gen 4 ×4, GPU ×16, a scale check against 10GbE, USB and USB4, and a file-transfer time calculator. Sizes are decimal GB and the result is labeled an idealized lower bound, not a benchmark.
 - **Glossary, methodology, sources**: plain-English terms, the exact calculation formulas, a "Data checked" date, and citations to standards bodies (PCI-SIG, USB-IF, HDMI Forum, IEEE, Wi-Fi Alliance, JEDEC).
