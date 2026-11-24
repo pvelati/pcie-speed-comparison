@@ -358,6 +358,22 @@ try {
     'crosslink ratio shown',
     (await page.$eval('.cross-ratio', (n) => n.textContent)).includes('×'),
   );
+  await page.evaluate(() => {
+    const r = document.querySelector('.cross-range');
+    r.value = '20';
+    r.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  check(
+    'crosslink slider: 20% on DDR5 → 471 Gbps',
+    (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('471Gbps'),
+  );
+  check(
+    'crosslink slider deselects non-matching presets',
+    (await page.$$eval(
+      '.cross-side',
+      (sides) => sides[0].querySelectorAll('.preset-btn.active').length,
+    )) === 0,
+  );
 
   check('log scale note present', (await page.$('.scale-note')) !== null);
   check('chart has decade gridlines', (await page.$$eval('.chart-tickline', (t) => t.length)) > 20);

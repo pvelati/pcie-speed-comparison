@@ -3,7 +3,7 @@
     "collect": {
       "numberOfRuns": 2,
       "url": ["http://localhost:4173/"],
-      "startServerCommand": "node node_modules/vite/bin/vite.js preview --port 4173 --strictPort",
+      "startServerCommand": "node node_modules/vite/bin/vite.js preview --port 4173 --strictPort --base=${BASE_PATH:-/}",
       "startServerReadyPattern": "Local:",
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new --disable-gpu --disable-dev-shm-usage",

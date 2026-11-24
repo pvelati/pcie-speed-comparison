@@ -55,6 +55,11 @@ jobs:
         run: npm run check
       - name: Build
         run: npm run build
+      - name: Lighthouse CI (min scores, perf 90 / a11y 95 / BP 85 / seo 95)
+        # Guards direct pushes to main, which skip the PR workflow.
+        # BASE_PATH (set above) is expanded by the shell when LHCI starts the
+        # preview server, so subpath builds are audited under their real base.
+        run: npx lhci autorun
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Upload artifact

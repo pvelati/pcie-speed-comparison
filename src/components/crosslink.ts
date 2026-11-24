@@ -57,6 +57,16 @@ export function buildCrossLink(): HTMLElement {
     }
     select.value = state[id].row.id;
 
+    const range = el('input', {
+      class: 'cross-range',
+      type: 'range',
+      min: '0',
+      max: '40',
+      step: '1',
+      value: String(state[id].overhead),
+      'aria-label': `Protocol overhead for side ${id.toUpperCase()} (%)`,
+    });
+    const pct = el('output', { class: 'cross-pct', for: `cross-${id}` }, `${state[id].overhead}%`);
     const presetBtns = PRESETS.map((v) =>
       el('button', { class: 'preset-btn', type: 'button', 'data-value': String(v) }, `${v}%`),
     );
@@ -76,6 +86,8 @@ export function buildCrossLink(): HTMLElement {
 
     const applyOverhead = (v: number) => {
       state[id].overhead = v;
+      range.value = String(v);
+      pct.textContent = `${v}%`;
       for (const b of presetBtns) {
         b.classList.toggle('active', Number(b.getAttribute('data-value')) === v);
       }
@@ -84,6 +96,7 @@ export function buildCrossLink(): HTMLElement {
     for (const b of presetBtns) {
       b.addEventListener('click', () => applyOverhead(Number(b.getAttribute('data-value'))));
     }
+    range.addEventListener('input', () => applyOverhead(Number(range.value)));
     select.addEventListener('change', () => {
       state[id].row = byId(select.value);
       applyOverhead(DEFAULT_OVERHEAD[state[id].row.family] ?? 0);
@@ -94,6 +107,7 @@ export function buildCrossLink(): HTMLElement {
       { class: 'cross-side' },
       el('label', { for: `cross-${id}`, class: 'cross-label' }, `${id.toUpperCase()} · standard`),
       select,
+      el('div', { class: 'cross-overhead' }, range, pct),
       presetsBox,
       el('div', { class: 'cross-value', 'aria-live': 'polite' }, num, unitEl),
       sub,
@@ -156,7 +170,7 @@ export function buildCrossLink(): HTMLElement {
     el(
       'p',
       { class: 'cross-note' },
-      "Pick a standard for each side. The overhead preset jumps to that family's typical default on selection (click a preset to change it). ",
+      "Pick a standard for each side. Overhead starts at the family's typical default on selection; adjust it with the slider (0-40%, 1% steps) or the preset buttons. ",
       'PCIe rows are ×16 one-way link ceilings; RAM rows are per-channel bandwidth; the other families are headline spec rates. The ratio uses the overhead-adjusted values.',
     ),
     el(
