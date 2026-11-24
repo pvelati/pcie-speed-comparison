@@ -2,6 +2,7 @@
 import { DATA_CHECKED } from '../data/standards.js';
 import { SOURCES } from '../data/sources.js';
 import { el } from '../dom.js';
+import { familyIcon, FAMILY_ICON } from './icons.js';
 
 const FAMILY_ORDER = ['PCI Express', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
 
@@ -84,7 +85,12 @@ export function buildSources(): HTMLElement {
       el(
         'details',
         { class: 'source-group hideable hideable-card' },
-        el('summary', {}, `${family} (${items.length} sources)`),
+        el(
+          'summary',
+          {},
+          familyIcon(FAMILY_ICON[family], 16),
+          `${family} (${items.length} sources)`,
+        ),
         el(
           'ul',
           {},

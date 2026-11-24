@@ -87,6 +87,11 @@ try {
   const title = await page.title();
   check('title is the page title', title === 'PCIe Speed Explorer: Understand Every Lane', title);
   check('no JS errors on load', errors.length === 0, JSON.stringify(errors));
+  const rawHtml = await (await fetch(PAGE_URL)).text();
+  check(
+    'initial HTML contains rendered content (prerendered at build)',
+    rawHtml.includes('id="explorer"') && rawHtml.includes('Last updated:'),
+  );
 
   for (const id of ['explorer', 'lanes', 'compare', 'examples', 'glossary', 'sources']) {
     check(`section #${id} exists`, Boolean(await page.$(`#${id}`)));
@@ -149,6 +154,31 @@ try {
   const strip2 = await page.$eval('.compare-strip', (n) => n.textContent);
   check('swap: strip now shows B is 4x A', strip2.includes('B is 4× A'), strip2);
 
+  // -- protocol overhead slider -------------------------------------------------------
+  const setOverhead = (v) =>
+    page.evaluate((value) => {
+      const r = document.querySelector('#overhead-range');
+      r.value = String(value);
+      r.dispatchEvent(new Event('input', { bubbles: true }));
+    }, v);
+  await setOverhead(20);
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num')
+        ?.textContent === '3.151',
+  );
+  check('overhead 20%: A shows 3.151 GB/s (3.938 spec × 0.8)', true);
+  check(
+    'overhead note cites spec framing overheads',
+    (await page.$eval('.overhead-note', (n) => n.textContent)).includes('39 B per frame'),
+  );
+  await setOverhead(0);
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num')
+        ?.textContent === '3.938',
+  );
+
   // -- lane visualizer follows Link A -------------------------------------------
   const laneRows = () => page.$$eval('.lane-row', (rows) => rows.length);
   check('lane diagram shows 4 lanes for A ×4', (await laneRows()) === 4, `got ${await laneRows()}`);
@@ -182,14 +212,24 @@ try {
     )) === '512',
   );
 
-  // -- hero figure ----------------------------------------------------------------
-  const heroText = await page.$eval('.hero-figure', (n) => n.textContent);
+  // -- hero family chips ------------------------------------------------------------
   check(
-    'hero shows 512 GB/s with one-way/bidirectional distinction',
-    heroText.includes('512') &&
-      heroText.includes('256 GB/s') &&
-      heroText.includes('not a one-way rate'),
+    'hero has 6 family chips, each with an SVG icon',
+    (await page.$$eval('.hero-chip', (c) => c.length)) === 6 &&
+      (await page.$$eval('.hero-chip svg', (s) => s.length)) === 6,
   );
+  check(
+    'RAM chip shows its standard count',
+    (await page.$eval('.chip-memory .chip-count', (n) => n.textContent)) === '6',
+  );
+  await page.click('.chip-memory');
+  await new Promise((r) => setTimeout(r, 150));
+  check(
+    'hero chip selects the Memory tab',
+    (await page.$eval('#tab-memory', (b) => b.getAttribute('aria-selected'))) === 'true',
+  );
+  await page.evaluate(() => document.querySelector('#tab-all')?.click());
+  await new Promise((r) => setTimeout(r, 150));
   check(
     'hero shows last updated date',
     (await page.$eval('.hero-updated', (n) => n.textContent)) === 'Last updated: 24 November 2026',
@@ -308,6 +348,16 @@ try {
     (await page.$eval('#transfer-time', (n) => n.textContent)) === '0.2 s',
     `got ${await page.$eval('#transfer-time', (n) => n.textContent)}`,
   );
+  await page.evaluate(() => {
+    const r = document.querySelector('#calc-overhead-range');
+    r.value = '40';
+    r.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  check(
+    'calculator with 40% overhead (Gen 5 ×16, 10 GB → 0.3 s)',
+    (await page.$eval('#transfer-time', (n) => n.textContent)) === '0.3 s',
+    `got ${await page.$eval('#transfer-time', (n) => n.textContent)}`,
+  );
   check('idealized lower-bound label present', examplesText.includes('idealized lower bound'));
 
   // -- glossary & sources ------------------------------------------------------------------
@@ -345,6 +395,9 @@ try {
   );
 
   // -- mobile 320px ------------------------------------------------------------------------
+  await page.addStyleTag({
+    content: '.section { content-visibility: visible !important; }',
+  });
   await page.setViewport({ width: 320, height: 700 });
   await new Promise((r) => setTimeout(r, 150));
   const overflow = await page.evaluate(() => ({

@@ -48,6 +48,9 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
   const stateA: PanelState = { gen: PCIE_GENERATIONS[3], lanes: 16 }; // PCIe 4.0 ×16
   const stateB: PanelState = { gen: PCIE_GENERATIONS[2], lanes: 4 }; // PCIe 3.0 ×4
 
+  let overhead = 0; // percent of spec ceiling lost to protocol overhead
+  const refreshFns: Array<() => void> = [];
+
   const buildPanel = (id: 'a' | 'b', state: PanelState, onExternalChange?: () => void) => {
     const refs: PanelRefs = {} as PanelRefs;
 
@@ -158,18 +161,29 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
         `Note: ${state.gen.calculationNote} Lane scaling: one-way = per-lane × ${state.lanes}. ` +
         'The formula accounts for line encoding only. Packet/protocol overhead and higher layers make real application payload lower.';
 
+      const eff = (v: number) => (overhead === 0 ? v : v * (1 - overhead / 100));
       refs.metricsRoot.replaceChildren(
         el(
           'div',
           { class: 'metric-hero' },
-          el('span', { class: 'metric-label' }, 'One-way link ceiling'),
+          el(
+            'span',
+            { class: 'metric-label' },
+            overhead === 0 ? 'One-way link ceiling' : `One-way, after ${overhead}% overhead`,
+          ),
           el(
             'span',
             { class: 'metric-value' },
-            el('span', { class: 'num' }, formatRate(m.oneWayGBps)),
+            el('span', { class: 'num' }, formatRate(eff(m.oneWayGBps))),
             el('small', {}, 'GB/s'),
           ),
-          el('span', { class: 'metric-sub' }, `${withUnit(m.oneWayGbps, 'Gbps')} · per direction`),
+          el(
+            'span',
+            { class: 'metric-sub' },
+            overhead === 0
+              ? `${withUnit(m.oneWayGbps, 'Gbps')} · per direction`
+              : `spec ceiling ${withUnit(m.oneWayGBps, 'GB/s')} minus ${overhead}% · per direction`,
+          ),
         ),
         el(
           'div',
@@ -178,16 +192,23 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
           el(
             'span',
             { class: 'metric-value small' },
-            el('span', { class: 'num' }, formatRate(m.bidirectionalGBps)),
+            el('span', { class: 'num' }, formatRate(eff(m.bidirectionalGBps))),
             el('small', {}, 'GB/s'),
           ),
-          el('span', { class: 'metric-sub' }, `${withUnit(m.bidirectionalGbps, 'Gbps')} total`),
+          el(
+            'span',
+            { class: 'metric-sub' },
+            overhead === 0
+              ? `${withUnit(m.bidirectionalGbps, 'Gbps')} total`
+              : `spec ${withUnit(m.bidirectionalGBps, 'GB/s')} minus ${overhead}%`,
+          ),
         ),
       );
 
       onExternalChange?.();
     }
 
+    refreshFns.push(refresh);
     refresh();
     return panel;
   };
@@ -252,6 +273,37 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
   });
   compareStrip.append(el('p', { class: 'strip-actions' }, swapBtn));
 
+  // -- protocol overhead -----------------------------------------------------------
+  const overheadRange = el('input', {
+    class: 'overhead-range',
+    type: 'range',
+    id: 'overhead-range',
+    min: '0',
+    max: '40',
+    step: '5',
+    value: '0',
+  });
+  const overheadOut = el('output', { for: 'overhead-range' }, '0%');
+  const overheadControl = el(
+    'div',
+    { class: 'overhead-control' },
+    el('label', { for: 'overhead-range', class: 'overhead-label' }, 'Protocol overhead'),
+    overheadRange,
+    overheadOut,
+    el(
+      'p',
+      { class: 'overhead-note' },
+      'How much sustained payload typically falls short of the spec ceiling: ',
+      'PCIe TLP/DLLP ~5–10% on large transfers (much more on small packets); Ethernet framing 39 B per frame (up to ~35% at 64 B frames, under 1% at 1500 B); USB handshakes ~5–20%; Wi-Fi MAC, ACKs and retransmissions ~20–40%. ',
+      'Rules of thumb from the protocol specifications, not a single standard number. The assumption is identical for both links, so it cancels in the A/B ratio.',
+    ),
+  );
+  overheadRange.addEventListener('input', () => {
+    overhead = Number(overheadRange.value);
+    overheadOut.textContent = `${overhead}%`;
+    for (const f of refreshFns) f();
+  });
+
   function refreshCompare() {
     const a = linkMetrics(stateA.gen, stateA.lanes);
     const b = linkMetrics(stateB.gen, stateB.lanes);
@@ -269,6 +321,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
 
   section.append(
     el('div', { class: 'explorer-grid' }, panelA, panelB, compareStrip),
+    overheadControl,
     el(
       'p',
       { class: 'footnote' },

@@ -10,6 +10,7 @@ import {
   type RateKind,
   type RateStatus,
 } from '../data/standards.js';
+import { familyIcon, FAMILY_ICON } from './icons.js';
 import { SOURCES_BY_ID } from '../data/sources.js';
 import { linkMetrics } from '../lib/pcie.js';
 import { formatRate } from '../lib/format.js';
@@ -153,6 +154,9 @@ export function buildComparison(): HTMLElement {
 
   const buildTabButton = (tab: Tab, active: boolean) => {
     const count = countFor(tab);
+    const children: Array<Node | string> = [];
+    if (tab !== 'All') children.push(familyIcon(FAMILY_ICON[tab], 16));
+    children.push(el('span', { class: 'tab-label' }, tab));
     const btn = el(
       'button',
       {
@@ -164,7 +168,7 @@ export function buildComparison(): HTMLElement {
         'aria-controls': `panel-${tab.toLowerCase()}`,
         tabindex: active ? '0' : '-1',
       },
-      el('span', { class: 'tab-label' }, tab),
+      ...children,
       el('span', { class: 'tab-count', 'aria-label': `${count} standards` }, String(count)),
     );
     btn.addEventListener('click', () => selectTab(tab, btn));
@@ -175,7 +179,7 @@ export function buildComparison(): HTMLElement {
     const label = el(
       'span',
       { class: 'chart-label' },
-      el('span', { class: 'chart-name' }, row.label),
+      el('span', { class: 'chart-name' }, familyIcon(FAMILY_ICON[row.family], 15), row.label),
       el('span', { class: 'chart-rate' }, row.displayRate),
     );
     const track = el('div', { class: 'chart-track' });
@@ -354,6 +358,12 @@ export function buildComparison(): HTMLElement {
     );
     return panel;
   }
+
+  document.addEventListener('ba:select-family', ((e: Event) => {
+    const name = (e as CustomEvent<string>).detail;
+    const btn = tablist.querySelector<HTMLButtonElement>(`#tab-${name.toLowerCase()}`);
+    if (btn && (TABS as readonly string[]).includes(name)) selectTab(name as Tab, btn);
+  }) as EventListener);
 
   function selectTab(tab: Tab, btn: HTMLButtonElement) {
     activeTab = tab;

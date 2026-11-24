@@ -1,17 +1,46 @@
 import './styles.css';
 import { el } from './dom.js';
-import { PCIE_GENERATIONS, DATA_CHECKED } from './data/standards.js';
-import { linkMetrics } from './lib/pcie.js';
-import { withUnit } from './lib/format.js';
+import { DATA_CHECKED } from './data/standards.js';
 import { buildExplorer } from './components/explorer.js';
+import { ALL_ROWS } from './components/compare.js';
+import { familyIcon, FAMILY_ICON } from './components/icons.js';
 import { buildLaneVisualizer } from './components/lanes.js';
 import { buildComparison } from './components/compare.js';
 import { buildExamples } from './components/examples.js';
 import { buildGlossary } from './components/glossary.js';
 import { buildSources } from './components/sources.js';
 
-const gen7 = PCIE_GENERATIONS.find((g) => g.generation === 7)!;
-const hero = linkMetrics(gen7, 16);
+const HERO_FAMILIES = [
+  { tab: 'PCIe', name: 'PCIe' },
+  { tab: 'USB', name: 'USB' },
+  { tab: 'HDMI', name: 'HDMI' },
+  { tab: 'Ethernet', name: 'Ethernet' },
+  { tab: 'Wi-Fi', name: 'Wi-Fi' },
+  { tab: 'Memory', name: 'RAM (DDR)' },
+];
+
+function heroChips() {
+  const strip = el('div', { class: 'hero-chips' });
+  for (const f of HERO_FAMILIES) {
+    const count = ALL_ROWS.filter((r) => r.family === f.tab).length;
+    const chip = el(
+      'a',
+      {
+        class: `hero-chip chip-${f.tab.toLowerCase().replace(/[^a-z]/g, '')}`,
+        href: '#compare',
+        'data-filter': f.tab,
+      },
+      familyIcon(FAMILY_ICON[f.tab], 20),
+      el('span', { class: 'chip-name' }, f.name),
+      el('span', { class: 'chip-count' }, String(count)),
+    );
+    chip.addEventListener('click', () =>
+      document.dispatchEvent(new CustomEvent('ba:select-family', { detail: f.tab })),
+    );
+    strip.append(chip);
+  }
+  return strip;
+}
 
 function header() {
   return el(
@@ -49,31 +78,7 @@ function heroSection() {
       'Ethernet, Wi-Fi and RAM (DDR), each cited to its standard.',
     ),
     el('p', { class: 'hero-updated' }, `Last updated: ${DATA_CHECKED}`),
-    el(
-      'div',
-      { class: 'hero-figure', 'aria-label': 'PCIe 7.0 ×16 headline figure' },
-      el(
-        'div',
-        { class: 'hero-number' },
-        el('span', { class: 'num' }, '512'),
-        el('small', {}, 'GB/s'),
-      ),
-      el(
-        'p',
-        { class: 'hero-figure-caption' },
-        el('strong', {}, 'PCIe 7.0 ×16, up to, bidirectional aggregate'),
-        ' per PCI-SIG. Each direction carries ',
-        el('strong', {}, withUnit(hero.oneWayGBps, 'GB/s')),
-        '; 512 GB/s is their sum, not a one-way rate.',
-      ),
-      el(
-        'div',
-        { class: 'hero-split', 'aria-hidden': 'true' },
-        el('span', {}, `256 GB/s →`),
-        el('span', { class: 'hero-split-mid' }, '×16 full-duplex lanes'),
-        el('span', {}, `← 256 GB/s`),
-      ),
-    ),
+    heroChips(),
     el(
       'p',
       { class: 'hero-ctas' },
@@ -121,7 +126,7 @@ function main() {
 
   const root = document.getElementById('app');
   if (!root) throw new Error('#app root missing');
-  root.append(app);
+  root.replaceChildren(app);
 
   navScrollSpy();
 }

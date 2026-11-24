@@ -227,65 +227,6 @@ p {
   font-size: clamp(16px, 2vw, 19px);
 }
 
-.hero-figure {
-  margin: 40px 0 28px;
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--cyan);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 28px 32px;
-  max-width: 640px;
-}
-
-.hero-number {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: clamp(64px, 12vw, 112px);
-  font-weight: 800;
-  line-height: 1;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.hero-number small {
-  font-size: clamp(18px, 3vw, 28px);
-  font-weight: 600;
-  color: var(--muted);
-}
-
-.hero-figure-caption {
-  margin: 14px 0 18px;
-  color: var(--muted);
-  font-size: 15px;
-}
-
-.hero-figure-caption strong {
-  color: var(--ink);
-}
-
-.hero-split {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  font-family: var(--mono);
-  font-size: 14px;
-  border-top: 1px dashed var(--line);
-  padding-top: 14px;
-}
-
-.hero-split span:first-child {
-  color: var(--cyan);
-}
-
-.hero-split span:last-child {
-  color: var(--amber);
-}
-
-.hero-split-mid {
-  color: var(--faint);
-}
-
 .hero-ctas {
   display: flex;
   gap: 12px;
@@ -1730,4 +1671,208 @@ p {
   font-family: var(--mono);
   font-size: 13px;
   color: var(--faint);
+}
+
+/* --- hero family chips (replace the old 512 GB/s block) --- */
+
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 22px;
+}
+
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.hero-chip:hover {
+  border-color: var(--cyan);
+  background: var(--surface-2);
+}
+
+.hero-chip .chip-count {
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.chip-pcie .icon {
+  color: var(--blue);
+}
+.chip-usb .icon {
+  color: var(--cyan);
+}
+.chip-hdmi .icon {
+  color: var(--amber);
+}
+.chip-ethernet .icon {
+  color: var(--green);
+}
+.chip-wifi .icon {
+  color: var(--violet);
+}
+.chip-memory .icon {
+  color: var(--rose);
+}
+
+/* family icons in compare tabs and chart rows */
+.tab-btn .icon {
+  flex: none;
+}
+.tab-btn .icon-pcie {
+  color: var(--blue);
+}
+.tab-btn .icon-usb {
+  color: var(--cyan);
+}
+.tab-btn .icon-hdmi {
+  color: var(--amber);
+}
+.tab-btn .icon-ethernet {
+  color: var(--green);
+}
+.tab-btn .icon-wifi {
+  color: var(--violet);
+}
+.tab-btn .icon-memory {
+  color: var(--rose);
+}
+
+.chart-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chart-row:has(.bar-pcie) .chart-name .icon {
+  color: var(--blue);
+}
+.chart-row:has(.bar-usb) .chart-name .icon {
+  color: var(--cyan);
+}
+.chart-row:has(.bar-hdmi) .chart-name .icon {
+  color: var(--amber);
+}
+.chart-row:has(.bar-ethernet) .chart-name .icon {
+  color: var(--green);
+}
+.chart-row:has(.bar-wi-fi) .chart-name .icon {
+  color: var(--violet);
+}
+.chart-row:has(.bar-memory) .chart-name .icon {
+  color: var(--rose);
+}
+
+.hideable-card > summary .icon {
+  flex: none;
+}
+
+/* --- protocol overhead slider --- */
+
+.overhead-control {
+  margin-top: 22px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.overhead-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.overhead-range {
+  flex: 1 1 220px;
+  min-height: 28px;
+  accent-color: var(--cyan);
+}
+
+.overhead-control output {
+  font-family: var(--mono);
+  color: var(--cyan);
+  min-width: 40px;
+  text-align: right;
+}
+
+.overhead-note {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--faint);
+  line-height: 1.55;
+}
+
+.calc-overhead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.calc-overhead .overhead-range {
+  flex: 1;
+}
+
+/* --- smartphone and general interaction polish --- */
+
+button,
+a,
+summary,
+input {
+  touch-action: manipulation;
+}
+
+/* offscreen sections skip rendering work until scrolled near (web.dev) */
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}
+
+@media (max-width: 760px) {
+  .site-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .seg {
+    min-height: 44px;
+  }
+
+  .hero-chip {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
 }

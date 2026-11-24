@@ -153,14 +153,43 @@ export function buildExamples(): HTMLElement {
 
   let activeConfig = 'gen4x4';
   let activeSize = '10 GB';
+  let overhead = 0;
 
   function refreshCalc() {
     const c = configs.find((x) => x.id === activeConfig)!;
     const bytes = DECIMAL_GIGABYTES[activeSize];
-    const secs = transferSeconds(bytes, c.metrics.oneWayGBps);
+    const rate = c.metrics.oneWayGBps * (1 - overhead / 100);
+    const secs = transferSeconds(bytes, rate);
     timeOut.textContent = formatDuration(secs);
-    timeSub.textContent = `${activeSize} (decimal, 1 GB = 1,000 MB) ÷ ${withUnit(c.metrics.oneWayGBps, 'GB/s')}, one direction. time = bytes ÷ bytes per second.`;
+    timeSub.textContent =
+      overhead === 0
+        ? `${activeSize} (decimal, 1 GB = 1,000 MB) ÷ ${withUnit(c.metrics.oneWayGBps, 'GB/s')}, one direction. time = bytes ÷ bytes per second.`
+        : `${activeSize} (decimal) ÷ ${withUnit(rate, 'GB/s')} effective (spec ${withUnit(c.metrics.oneWayGBps, 'GB/s')} minus ${overhead}%). time = bytes ÷ bytes per second.`;
   }
+
+  const calcOverheadRange = el('input', {
+    class: 'overhead-range',
+    type: 'range',
+    id: 'calc-overhead-range',
+    min: '0',
+    max: '40',
+    step: '5',
+    value: '0',
+    'aria-label': 'Protocol overhead percent',
+  });
+  const calcOverheadOut = el('output', { for: 'calc-overhead-range' }, '0%');
+  calcOverheadRange.addEventListener('input', () => {
+    overhead = Number(calcOverheadRange.value);
+    calcOverheadOut.textContent = `${overhead}%`;
+    refreshCalc();
+  });
+  const calcOverhead = el(
+    'div',
+    { class: 'calc-overhead' },
+    el('label', { for: 'calc-overhead-range', class: 'overhead-label' }, 'Protocol overhead'),
+    calcOverheadRange,
+    calcOverheadOut,
+  );
 
   const pillGroup = (
     name: string,
@@ -208,6 +237,7 @@ export function buildExamples(): HTMLElement {
         refreshCalc();
       },
     ),
+    calcOverhead,
     calcOut,
     el(
       'details',

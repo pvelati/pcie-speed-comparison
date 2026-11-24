@@ -12,14 +12,20 @@ not the same thing. Every number on the site says which of these it is.
 - **PCIe explorer**: two independent links (generation × lane width). Per-lane,
   one-way and bidirectional figures update as you change the controls. A ratio
   strip compares the two links (with a swap button) and states the basis of
-  the comparison.
+  the comparison. A protocol-overhead slider (0-40%, with spec-derived typical
+  values per family) shows what sustained payload looks like after protocol
+  overhead.
 - **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows
   the Link A width control.
 - **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC
   DDR1-6) on a logarithmic scale (10 Mbps to 1 Tbps), with per-category filters
-  showing row counts. Each row says what the number measures, its
-  directionality and its status. Roadmap items (1.6 Tb/s Ethernet, DDR6
-  preview) stay labeled as not ratified.
+  (each with an inline SVG icon and row count). Each row says what the number
+  measures, its directionality and its status. Future items (PCIe 6.0/7.0,
+  DDR6) are labeled "Future, not released".
+- **Prerendered HTML**: the build step renders the page in headless Chromium
+  and serializes the DOM into dist/index.html, so first paint needs no
+  JavaScript (fast LCP, works with JS off, indexable); the script then swaps
+  in the interactive version.
 - **Worked examples**: NVMe Gen 4 ×4, GPU ×16, a scale check against 10GbE, USB
   and USB4, and a file-transfer time calculator. Sizes are decimal GB and the
   result is labeled an idealized lower bound, not a benchmark.
