@@ -326,6 +326,39 @@ try {
     await page.$eval('.site-nav a[href="#glossary"]', (a) => a.classList.contains('active')),
   );
 
+  // -- cross-standard comparison -----------------------------------------------------
+  check(
+    'crosslink defaults: DDR5 vs PCIe 4.0 x16',
+    (await page.$eval('#cross-a', (n) => n.value)) === 'ddr5' &&
+      (await page.$eval('#cross-b', (n) => n.value)) === 'pcie-4',
+  );
+  check(
+    'crosslink A shows 73.6 GB/s (DDR5 per channel)',
+    (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('73.6'),
+  );
+  await page.evaluate(() => {
+    const r = document.querySelector('#cross-unit-gbit');
+    r.checked = true;
+    r.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  check(
+    'crosslink unit switch to Gbps shows 588.8',
+    (await page.$eval('.cross-side .cross-value', (n) => n.textContent)).includes('588.8'),
+  );
+  await page.evaluate(() => {
+    const sel = document.querySelector('#cross-b');
+    sel.value = 'pcie-6';
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  check(
+    'crosslink: PCIe 6.0 auto-applies 10% overhead (1024 → 921.6 Gbps)',
+    (await page.$$eval('.cross-side .cross-value', (ns) => ns[1].textContent)).includes('921.6'),
+  );
+  check(
+    'crosslink ratio shown',
+    (await page.$eval('.cross-ratio', (n) => n.textContent)).includes('×'),
+  );
+
   check('log scale note present', (await page.$('.scale-note')) !== null);
   check('chart has decade gridlines', (await page.$$eval('.chart-tickline', (t) => t.length)) > 20);
 

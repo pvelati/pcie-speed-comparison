@@ -11,6 +11,7 @@ import {
   type RateStatus,
 } from '../data/standards.js';
 import { familyIcon, FAMILY_ICON } from './icons.js';
+import { buildCrossLink } from './crosslink.js';
 import { SOURCES_BY_ID } from '../data/sources.js';
 import { linkMetrics } from '../lib/pcie.js';
 import { formatRate } from '../lib/format.js';
@@ -66,7 +67,7 @@ function countFor(tab: (typeof TABS)[number]): number {
 }
 type Tab = (typeof TABS)[number];
 
-const STATUS_LABEL: Record<RateStatus, string> = {
+export const STATUS_LABEL: Record<RateStatus, string> = {
   standard: 'Ratified standard',
   'published-spec': 'Published spec',
   'vendor-example': 'Vendor example',
@@ -415,6 +416,7 @@ export function buildComparison(): HTMLElement {
   selectTab(activeTab, tablist.querySelector<HTMLButtonElement>('[role="tab"]')!);
 
   section.append(tablist, resultCount, panels);
+  section.insertBefore(buildCrossLink(), tablist);
   return section;
 }
 
