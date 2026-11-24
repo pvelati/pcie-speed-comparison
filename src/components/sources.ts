@@ -35,7 +35,7 @@ export function buildSources(): HTMLElement {
 
   const methodology = el(
     'details',
-    { class: 'methodology hideable', open: true },
+    { class: 'methodology hideable' },
     el('summary', {}, 'Methodology: how the numbers are calculated'),
     el('p', {}, 'For Gen 1–2 (NRZ, 8b/10b) the per-lane, one-direction encoded ceiling is:'),
     code('per lane (GB/s) = GT/s × (8 ÷ 10) ÷ 8'),

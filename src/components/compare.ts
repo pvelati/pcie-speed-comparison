@@ -337,24 +337,6 @@ export function buildComparison(
     if (tab === 'All' || tab === 'Memory')
       notes.append(el('p', { class: 'family-note note-memory' }, FAMILY_NOTES.Memory));
 
-    const roadmap = el(
-      'div',
-      { class: 'roadmap-strip' },
-      el('h3', {}, 'Emerging / roadmap: not part of the ratified list above'),
-      ...ROADMAP_ITEMS.map((item) =>
-        el(
-          'p',
-          { class: 'roadmap-item' },
-          el('span', { class: 'roadmap-label' }, item.label),
-          el('span', { class: 'roadmap-rate' }, item.displayRate),
-          '. ',
-          item.note,
-          ' ',
-          sourceLinks(item.sourceIds),
-        ),
-      ),
-    );
-
     const panel = el(
       'div',
       {
@@ -367,12 +349,41 @@ export function buildComparison(
       scaleNote,
       el(
         'details',
-        { class: 'notes-details hideable hideable-bare', open: true },
+        { class: 'notes-details hideable hideable-bare' },
         el('summary', {}, 'Caveats for this family'),
         notes,
       ),
-      roadmap,
-      buildTable(rows),
+      el(
+        'details',
+        { class: 'roadmap-details hideable hideable-bare' },
+        el(
+          'summary',
+          {},
+          `Roadmap: emerging standards, not part of the list above (${ROADMAP_ITEMS.length})`,
+        ),
+        el(
+          'div',
+          { class: 'roadmap-strip' },
+          ...ROADMAP_ITEMS.map((item) =>
+            el(
+              'p',
+              { class: 'roadmap-item' },
+              el('span', { class: 'roadmap-label' }, item.label),
+              el('span', { class: 'roadmap-rate' }, item.displayRate),
+              '. ',
+              item.note,
+              ' ',
+              sourceLinks(item.sourceIds),
+            ),
+          ),
+        ),
+      ),
+      el(
+        'details',
+        { class: 'table-details hideable hideable-bare' },
+        el('summary', {}, `Full data table (${rows.length} rows)`),
+        buildTable(rows),
+      ),
     );
     return panel;
   }

@@ -283,7 +283,7 @@ try {
   const ethText = await page.$eval('.tab-panel', (n) => n.textContent);
   check(
     '1.6 Tb/s appears only in the roadmap strip',
-    ethText.includes('roadmap') && ethText.includes('1.6 Tbps'),
+    ethText.toLowerCase().includes('roadmap') && ethText.includes('1.6 Tbps'),
   );
 
   await clickTab('PCIe');
@@ -571,8 +571,13 @@ try {
     await page.$eval('.source-group', (d) => d.open === true),
   );
   check(
-    'compare caveats are a collapsible, open by default',
-    await page.$eval('.notes-details', (d) => d.open === true),
+    'compare caveats are collapsible, closed by default',
+    await page.$eval('.notes-details', (d) => d.open === false),
+  );
+  check(
+    'data table and roadmap are collapsed by default',
+    (await page.$eval('.table-details', (d) => d.open === false)) &&
+      (await page.$eval('.roadmap-details', (d) => d.open === false)),
   );
 
   // -- mobile 320px ------------------------------------------------------------------------

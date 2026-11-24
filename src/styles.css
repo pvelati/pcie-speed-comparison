@@ -795,13 +795,10 @@ p {
   background: transparent;
 }
 
-.roadmap-strip h3 {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--faint);
-  font-family: var(--mono);
-  margin-bottom: 8px;
+.notes-details,
+.roadmap-details,
+.table-details {
+  margin-top: 16px;
 }
 
 .roadmap-item {

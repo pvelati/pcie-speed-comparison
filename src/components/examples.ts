@@ -241,7 +241,7 @@ export function buildExamples(): HTMLElement {
     calcOut,
     el(
       'details',
-      { class: 'caveat-box hideable', open: true },
+      { class: 'caveat-box hideable' },
       el('summary', {}, el('strong', {}, 'This is an idealized lower bound, not a benchmark.')),
       el(
         'p',

@@ -113,7 +113,7 @@ export function buildExplorer(onStateChange?: () => void): ExplorerHandle {
     const note = el('p', { class: 'fineprint' }, '');
     const noteDetails = el(
       'details',
-      { class: 'note-details hideable hideable-bare', open: true },
+      { class: 'note-details hideable hideable-bare' },
       el('summary', {}, 'How this number is calculated'),
       note,
     );
