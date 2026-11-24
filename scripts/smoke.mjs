@@ -172,6 +172,17 @@ try {
     'overhead note cites spec framing overheads',
     (await page.$eval('.overhead-note', (n) => n.textContent)).includes('39 B per frame'),
   );
+  await page.click('.preset-btn[data-value="35"]');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num')
+        ?.textContent === '2.56',
+  );
+  check('preset 35%: A shows 2.56 GB/s (3.938 × 0.65)', true);
+  check(
+    'preset button shows active state',
+    await page.$eval('.preset-btn[data-value="35"]', (b) => b.classList.contains('active')),
+  );
   await setOverhead(0);
   await page.waitForFunction(
     () =>

@@ -3,7 +3,7 @@
  * Each lane draws a transmit path (→) and a receive path (←).
  * The lane count follows Link A's width control.
  */
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 
 const LANE_H = 26;
 const HEADER_H = 34;
@@ -17,7 +17,7 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '02 · Lane visualizer'),
-      el('h2', {}, 'What x16 actually means'),
+      el('h2', {}, w('What x16'), ' ', w('actually means')),
       el(
         'p',
         { class: 'lede' },

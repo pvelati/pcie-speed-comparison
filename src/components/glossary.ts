@@ -1,5 +1,5 @@
 /** Compact glossary: native <details>/<summary>, keyboard accessible, no JS. */
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 
 const TERMS: Array<{ term: string; def: string }> = [
   {
@@ -48,7 +48,7 @@ export function buildGlossary(): HTMLElement {
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '05 · Terms'),
-      el('h2', {}, 'Explain the terms'),
+      el('h2', {}, w('Explain the terms')),
       el(
         'p',
         { class: 'lede' },

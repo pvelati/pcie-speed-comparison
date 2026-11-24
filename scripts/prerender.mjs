@@ -55,7 +55,7 @@ async function waitForServer(url, ms) {
 try {
   await waitForServer(PAGE_URL, 20000);
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium',
+    executablePath: process.env.CHROME_PATH || '/usr/bin/chromium',
     headless: 'new',
     args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
   });

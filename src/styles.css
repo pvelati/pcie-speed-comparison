@@ -1815,6 +1815,38 @@ p {
   text-align: right;
 }
 
+.overhead-presets {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.preset-btn {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: var(--mono);
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.preset-btn:hover {
+  color: var(--ink);
+  border-color: var(--cyan);
+}
+
+.preset-btn.active {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(45, 212, 238, 0.08);
+}
+
 .overhead-note {
   flex-basis: 100%;
   margin: 4px 0 0;
@@ -1874,5 +1906,15 @@ input {
   .hero-chip {
     padding: 10px 12px;
     font-size: 13px;
+  }
+}
+
+.w {
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .w {
+    white-space: normal;
   }
 }

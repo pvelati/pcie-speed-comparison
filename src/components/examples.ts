@@ -5,7 +5,7 @@
 import { INTERFACE_RATES, PCIE_GENERATIONS } from '../data/standards.js';
 import { DECIMAL_GIGABYTES, formatDuration, linkMetrics, transferSeconds } from '../lib/pcie.js';
 import { formatRate, withUnit } from '../lib/format.js';
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 
 const gen = (n: number) => PCIE_GENERATIONS.find((g) => g.generation === n)!;
 const rate = (id: string) => INTERFACE_RATES.find((r) => r.id === id)!;
@@ -18,7 +18,7 @@ export function buildExamples(): HTMLElement {
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '04 · Practical examples'),
-      el('h2', {}, 'What these numbers buy you'),
+      el('h2', {}, w('What these numbers'), ' ', w('buy you')),
       el(
         'p',
         { class: 'lede' },

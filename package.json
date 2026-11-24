@@ -25,10 +25,12 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "lighthouse": "lhci autorun"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
+    "@lhci/cli": "^0.16.1",
     "eslint": "^9.30.0",
     "globals": "^14.0.0",
     "prettier": "^3.6.0",

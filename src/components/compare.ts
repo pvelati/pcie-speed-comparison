@@ -15,7 +15,7 @@ import { SOURCES_BY_ID } from '../data/sources.js';
 import { linkMetrics } from '../lib/pcie.js';
 import { formatRate } from '../lib/format.js';
 import { CHART_TICKS, logPosition } from '../lib/logscale.js';
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 
 export interface ChartRow {
   id: string;
@@ -131,7 +131,21 @@ export function buildComparison(): HTMLElement {
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '03 · Scale check'),
-      el('h2', {}, 'PCIe vs USB, HDMI, Ethernet, Wi-Fi and RAM'),
+      el(
+        'h2',
+        {},
+        w('PCIe vs'),
+        ' ',
+        w('USB,'),
+        ' ',
+        w('HDMI,'),
+        ' ',
+        w('Ethernet,'),
+        ' ',
+        w('Wi-Fi'),
+        ' ',
+        w('and RAM'),
+      ),
       el(
         'p',
         { class: 'lede' },

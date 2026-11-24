@@ -12,9 +12,9 @@ not the same thing. Every number on the site says which of these it is.
 - **PCIe explorer**: two independent links (generation × lane width). Per-lane,
   one-way and bidirectional figures update as you change the controls. A ratio
   strip compares the two links (with a swap button) and states the basis of
-  the comparison. A protocol-overhead slider (0-40%, with spec-derived typical
-  values per family) shows what sustained payload looks like after protocol
-  overhead.
+  the comparison. A protocol-overhead slider (0-40%, with quick presets and
+  spec-derived typical values per family) shows what sustained payload looks
+  like after protocol overhead.
 - **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows
   the Link A width control.
 - **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC
@@ -60,13 +60,16 @@ npm run preview          # serve the production build
 
 ```bash
 npm run check            # prettier --check + eslint + tsc --noEmit + vitest
-npm run build            # production build
-npm run smoke            # headless Chromium UI test of the build (51 checks)
+npm run build            # production build (includes prerender into dist/index.html)
+npm run smoke            # headless Chromium UI test of the build (74 checks)
 npm run smoke /my-repo/  # same, for a subpath build
+npm run lighthouse       # Lighthouse CI: perf >= 95, a11y >= 95, seo >= 95, BP >= 85
 ```
 
-`smoke` starts `vite preview` on port 4173 and expects Chromium at
-`/usr/bin/chromium` (path configurable in `scripts/smoke.mjs`).
+`smoke` and the build-time prerender start `vite preview` on port 4173 and
+expect Chromium at `/usr/bin/chromium` (override with `CHROME_PATH`; the CI
+lighthouse job uses the runner's Chrome the same way). The PR workflow runs
+`check` and `lighthouse` on every pull request.
 
 ## Data and sources
 

@@ -6,7 +6,7 @@ import { LANE_WIDTHS, PCIE_GENERATIONS, UNCOMMON_LANES } from '../data/standards
 import type { PcieGeneration } from '../data/standards.js';
 import { linkMetrics, oneWayRatio } from '../lib/pcie.js';
 import { formatRate, withUnit } from '../lib/format.js';
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 
 interface PanelRefs {
   oneWayGBps: HTMLElement;
@@ -30,7 +30,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '01 · Interactive explorer'),
-      el('h2', {}, 'PCIe bandwidth, generation by generation'),
+      el('h2', {}, w('PCIe bandwidth,'), ' ', w('generation by generation')),
       el(
         'p',
         { class: 'lede' },
@@ -284,12 +284,35 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
     value: '0',
   });
   const overheadOut = el('output', { for: 'overhead-range' }, '0%');
+  const OVERHEAD_PRESETS = [
+    { value: 0, label: '0% spec ceiling' },
+    { value: 10, label: '10% PCIe, large transfer' },
+    { value: 30, label: '30% Wi-Fi' },
+    { value: 35, label: '35% Ethernet, 64 B frames' },
+  ];
+  const presetBtns = OVERHEAD_PRESETS.map((p) =>
+    el(
+      'button',
+      {
+        class: 'preset-btn',
+        type: 'button',
+        'data-value': String(p.value),
+      },
+      p.label,
+    ),
+  );
+  const presetsBox = el(
+    'div',
+    { class: 'overhead-presets', role: 'group', 'aria-label': 'Overhead presets' },
+    ...presetBtns,
+  );
   const overheadControl = el(
     'div',
     { class: 'overhead-control' },
     el('label', { for: 'overhead-range', class: 'overhead-label' }, 'Protocol overhead'),
     overheadRange,
     overheadOut,
+    presetsBox,
     el(
       'p',
       { class: 'overhead-note' },
@@ -298,11 +321,24 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       'Rules of thumb from the protocol specifications, not a single standard number. The assumption is identical for both links, so it cancels in the A/B ratio.',
     ),
   );
+  const syncPresets = () => {
+    for (const b of presetBtns) {
+      b.classList.toggle('active', Number(b.getAttribute('data-value')) === overhead);
+    }
+  };
   overheadRange.addEventListener('input', () => {
     overhead = Number(overheadRange.value);
     overheadOut.textContent = `${overhead}%`;
+    syncPresets();
     for (const f of refreshFns) f();
   });
+  for (const b of presetBtns) {
+    b.addEventListener('click', () => {
+      overheadRange.value = b.getAttribute('data-value')!;
+      overheadRange.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+  syncPresets();
 
   function refreshCompare() {
     const a = linkMetrics(stateA.gen, stateA.lanes);

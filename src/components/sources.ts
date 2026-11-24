@@ -1,7 +1,7 @@
 /** Methodology + source list. Every family of standards is cited near its data. */
 import { DATA_CHECKED } from '../data/standards.js';
 import { SOURCES } from '../data/sources.js';
-import { el } from '../dom.js';
+import { el, w } from '../dom.js';
 import { familyIcon, FAMILY_ICON } from './icons.js';
 
 const FAMILY_ORDER = ['PCI Express', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
@@ -23,7 +23,7 @@ export function buildSources(): HTMLElement {
       'div',
       { class: 'section-head' },
       el('p', { class: 'eyebrow' }, '06 · Sources & methodology'),
-      el('h2', {}, 'How these numbers are calculated'),
+      el('h2', {}, w('How these numbers'), ' ', w('are calculated')),
       el(
         'p',
         { class: 'lede' },

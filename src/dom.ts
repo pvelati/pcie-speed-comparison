@@ -3,6 +3,11 @@ export type Attrs = Record<string, string | number | boolean | null | undefined>
 
 const BOOLEAN_PROPS = new Set(['checked', 'disabled', 'selected', 'hidden']);
 
+/** Keeps one phrase on a single line (heading line-break control). */
+export function w(text: string): HTMLSpanElement {
+  return el('span', { class: 'w' }, text);
+}
+
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   attrs: Attrs = {},
