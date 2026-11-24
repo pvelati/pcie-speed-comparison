@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PCIe Speed Explorer — Understand Every Lane</title>
+    <meta
+      name="description"
+      content="Bandwidth Atlas: an interactive, source-cited guide to PCIe generations and lane widths, compared against USB, HDMI, Ethernet and Wi-Fi on an honest scale."
+    />
+    <meta name="theme-color" content="#0a0f1e" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PCIe Speed Explorer — Understand Every Lane" />
+    <meta
+      property="og:description"
+      content="Interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet and Wi-Fi, with authoritative sources and clear caveats."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="PCIe Speed Explorer — Understand Every Lane" />
+    <meta
+      name="twitter:description"
+      content="Interactive comparison of PCIe generations and lane widths against USB, HDMI, Ethernet and Wi-Fi."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div id="app">
+      <noscript>
+        <div class="noscript-box" role="alert">
+          <p>
+            <strong>Bandwidth Atlas needs JavaScript</strong> for its interactive explorer, charts
+            and calculators.
+          </p>
+          <p>
+            The core reference values: PCIe 7.0 ×16 reaches up to 512&nbsp;GB/s bidirectional
+            (256&nbsp;GB/s per direction) per PCI-SIG. PCIe 4.0 ×4 — the common NVMe configuration —
+            reaches about 7.88&nbsp;GB/s per direction at the link level. All figures on this site
+            are specification ceilings, not guaranteed application throughput.
+          </p>
+        </div>
+      </noscript>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

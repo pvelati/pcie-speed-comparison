@@ -1,0 +1,74 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  # Deploy on pushes to the repository's default branch (whatever it is
+  # called — checked at runtime, not hard-coded) and on manual dispatch.
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Resolve base path
+        # "/" for user/organization sites (owner.github.io) and for any repo
+        # serving on a custom domain (Pages then serves at the domain root);
+        # "/<repo>/" for ordinary project sites. The repo name and owner are
+        # never hard-coded.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REPOSITORY" != "${GITHUB_REPOSITORY_OWNER}.github.io" ]; then
+            BASE_PATH="/$(basename "$GITHUB_REPOSITORY")/"
+            if curl -fsSL \
+                -H "Authorization: bearer $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/$GITHUB_REPOSITORY/pages" \
+                | grep -Eq '"custom_domain": *"[a-z0-9]'; then
+              BASE_PATH="/"
+            fi
+          else
+            BASE_PATH="/"
+          fi
+          echo "BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify (format, lint, type-check, tests)
+        run: npm run check
+      - name: Build
+        run: npm run build
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

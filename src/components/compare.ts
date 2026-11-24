@@ -1,0 +1,376 @@
+/**
+ * Comparison of PCIe against USB, HDMI, Ethernet and Wi-Fi.
+ * Logarithmic chart (CSS/SVG-free, pure DOM) + accessible data table.
+ */
+import {
+  INTERFACE_RATES,
+  PCIE_GENERATIONS,
+  ROADMAP_ITEMS,
+  type InterfaceFamily,
+  type RateKind,
+  type RateStatus,
+} from '../data/standards.js';
+import { SOURCES_BY_ID } from '../data/sources.js';
+import { linkMetrics } from '../lib/pcie.js';
+import { formatRate } from '../lib/format.js';
+import { CHART_TICKS, logPosition } from '../lib/logscale.js';
+import { el } from '../dom.js';
+
+export interface ChartRow {
+  id: string;
+  family: 'PCIe' | InterfaceFamily;
+  label: string;
+  rateGbps: number;
+  displayRate: string;
+  rateKind: RateKind;
+  rateMeaning: string;
+  directionality: string;
+  status: RateStatus;
+  caveat?: string;
+  sourceIds: string[];
+}
+
+/** PCIe x16 one-way link ceilings, derived from the same tested math. */
+export function pcieChartRows(): ChartRow[] {
+  return PCIE_GENERATIONS.map((g) => {
+    const m = linkMetrics(g, 16);
+    return {
+      id: `pcie-${g.generation}`,
+      family: 'PCIe',
+      label: `${g.label} ×16`,
+      rateGbps: m.oneWayGbps,
+      displayRate: `${formatRate(m.oneWayGbps)} Gbps`,
+      rateKind: 'link',
+      rateMeaning: 'Theoretical one-way link ceiling per direction (×16).',
+      directionality: 'Full duplex — per-direction value shown; the aggregate would be double.',
+      status: 'standard' as RateStatus,
+      caveat:
+        g.family === 'pam4-flit'
+          ? 'Nominal PCI-SIG headline ceiling (FLIT/FEC overhead included at the spec level).'
+          : undefined,
+      sourceIds: g.sourceIds,
+    };
+  });
+}
+
+export const ALL_ROWS: ChartRow[] = [
+  ...pcieChartRows(),
+  ...INTERFACE_RATES.map((r) => ({ ...r, rateKind: r.rateKind })),
+].sort((a, b) => b.rateGbps - a.rateGbps);
+
+const TABS = ['All', 'PCIe', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi'] as const;
+type Tab = (typeof TABS)[number];
+
+const STATUS_LABEL: Record<RateStatus, string> = {
+  standard: 'Ratified standard',
+  'published-spec': 'Published spec',
+  'vendor-example': 'Vendor example',
+  roadmap: 'Roadmap',
+};
+
+const RATE_KIND_LABEL: Record<RateKind, string> = {
+  signaling: 'signaling rate',
+  link: 'link rate',
+  PHY: 'PHY rate',
+  theoretical: 'theoretical maximum',
+};
+
+const ORG_SHORT: Array<[RegExp, string]> = [
+  [/^pcisig-/, 'PCI-SIG'],
+  [/^usb-/, 'USB-IF'],
+  [/^hdmi-/, 'HDMI'],
+  [/^ieee-/, 'IEEE'],
+  [/^ea-/, 'Ethernet Alliance'],
+  [/^wifi-alliance-/, 'Wi-Fi Alliance'],
+  [/^intel-/, 'Intel'],
+];
+
+function orgShort(id: string): string {
+  return ORG_SHORT.find(([re]) => re.test(id))?.[1] ?? 'Source';
+}
+
+function sourceLinks(ids: string[]) {
+  const cell = el('span', { class: 'src-links' });
+  for (const id of ids) {
+    const src = SOURCES_BY_ID.get(id);
+    if (!src) continue;
+    cell.append(
+      el(
+        'a',
+        { href: src.url, class: 'src-link', title: src.name, 'aria-label': `Source: ${src.name}` },
+        orgShort(id),
+      ),
+    );
+  }
+  return cell;
+}
+
+const FAMILY_NOTES: Record<Exclude<Tab, 'All' | 'PCIe'>, string> = {
+  USB: 'USB naming has changed repeatedly (3.0 → 3.1 → 3.2). USB-C is a connector shape, not a speed guarantee, and USB4 can dynamically share bandwidth between tunneled data and display protocols.',
+  HDMI: 'HDMI bandwidth is a display/audio signal path — not a general-purpose file-transfer interface. Its figures are not directly equivalent to PCIe application data throughput.',
+  Ethernet:
+    'A nominal link rate is not application goodput. Media and PHY variants differ (twisted pair, fiber, backplane, DAC) — the speed label alone does not identify the cable or its reach.',
+  'Wi-Fi':
+    'Wi-Fi is a shared wireless medium: PHY rates divide among all clients and depend on channel width, streams, modulation, SNR, distance, interference and regulatory domain. Never read a PHY rate as a guaranteed per-client file-transfer speed.',
+};
+
+export function buildComparison(): HTMLElement {
+  const section = el(
+    'section',
+    { id: 'compare', class: 'section compare' },
+    el(
+      'div',
+      { class: 'section-head' },
+      el('p', { class: 'eyebrow' }, '03 · Scale check'),
+      el('h2', {}, 'PCIe vs USB, HDMI, Ethernet and Wi-Fi'),
+      el(
+        'p',
+        { class: 'lede' },
+        'Each row is labeled with ',
+        el('strong', {}, 'what the number measures'),
+        ' — signaling rate, link rate, PHY rate or theoretical ceiling — and how it is directed. This is a scale reference, not a declaration that one interface is “faster”.',
+      ),
+    ),
+  );
+
+  const tablist = el('div', {
+    class: 'tablist',
+    role: 'tablist',
+    'aria-label': 'Interface family filter',
+  });
+  const panels = el('div', {});
+
+  const rowsFor = (tab: Tab): ChartRow[] =>
+    tab === 'All' ? ALL_ROWS : ALL_ROWS.filter((r) => r.family === tab);
+
+  const buildTabButton = (tab: Tab, active: boolean) => {
+    const btn = el(
+      'button',
+      {
+        class: 'tab-btn',
+        type: 'button',
+        role: 'tab',
+        id: `tab-${tab.toLowerCase()}`,
+        'aria-selected': String(active),
+        'aria-controls': `panel-${tab.toLowerCase()}`,
+        tabindex: active ? '0' : '-1',
+      },
+      tab,
+    );
+    btn.addEventListener('click', () => selectTab(tab, btn));
+    return btn;
+  };
+
+  const buildChartRow = (row: ChartRow) => {
+    const label = el(
+      'span',
+      { class: 'chart-label' },
+      el('span', { class: 'chart-name' }, row.label),
+      el('span', { class: 'chart-rate' }, row.displayRate),
+    );
+    const track = el('div', { class: 'chart-track' });
+    for (const tick of CHART_TICKS) {
+      track.append(
+        el('span', {
+          class: 'chart-tickline',
+          style: `left:${(logPosition(tick.value) * 100).toFixed(3)}%`,
+        }),
+      );
+    }
+    // The slowest row (10 Mbps) sits exactly on the log-scale minimum, which
+    // maps to zero width. Clamp to a small visible sliver so it is never
+    // invisible; decade gridlines stay at their exact log positions.
+    const barPct = Math.max(logPosition(row.rateGbps) * 100, 1.5);
+    const bar = el('span', {
+      class: `chart-bar bar-${row.family.toLowerCase().replace(/\s/g, '-')}`,
+      style: `width:${barPct.toFixed(3)}%`,
+      title: `${row.label}: ${row.displayRate} — ${row.rateMeaning} ${row.directionality}`,
+    });
+    track.append(bar);
+    const value = el('span', { class: 'chart-value' }, row.displayRate);
+    return el('div', { class: 'chart-row' }, label, track, value);
+  };
+
+  const buildScale = () => {
+    const scale = el('div', { class: 'chart-scale' });
+    for (const tick of CHART_TICKS) {
+      scale.append(
+        el(
+          'span',
+          {
+            class: 'chart-scale-tick',
+            style: `left:${(logPosition(tick.value) * 100).toFixed(3)}%`,
+          },
+          tick.label,
+        ),
+      );
+    }
+    return scale;
+  };
+
+  const buildTable = (rows: ChartRow[]) => {
+    const head = el(
+      'thead',
+      {},
+      el(
+        'tr',
+        {},
+        th('Standard'),
+        th('Rate'),
+        th('What it measures'),
+        th('Direction'),
+        th('Status'),
+        th('Note'),
+        th('Source'),
+      ),
+    );
+    const body = el('tbody', {});
+    for (const row of rows) {
+      body.append(
+        el(
+          'tr',
+          {},
+          el('th', { scope: 'row' }, el('span', { class: 'row-fam' }, row.family), ' ', row.label),
+          el('td', { class: 'td-rate', 'data-label': 'Rate' }, row.displayRate),
+          el(
+            'td',
+            { 'data-label': 'What it measures' },
+            `${row.rateMeaning} (${RATE_KIND_LABEL[row.rateKind]})`,
+          ),
+          el('td', { 'data-label': 'Direction' }, row.directionality),
+          el(
+            'td',
+            { 'data-label': 'Status' },
+            el('span', { class: `status status-${row.status}` }, STATUS_LABEL[row.status]),
+          ),
+          el('td', { class: 'td-note', 'data-label': 'Note' }, row.caveat ?? '—'),
+          el('td', { 'data-label': 'Source' }, sourceLinks(row.sourceIds)),
+        ),
+      );
+    }
+    return el(
+      'table',
+      { class: 'data-table' },
+      el(
+        'caption',
+        { class: 'table-caption' },
+        'Reference rates — headline specification values. “Ratified standard” = approved standard; “Published spec” = published specification not yet broadly deployed; “Vendor example” = a concrete vendor product figure; “Roadmap” = future, not ratified.',
+      ),
+      head,
+      body,
+    );
+  };
+
+  let activeTab: Tab = 'All';
+
+  function renderPanel(tab: Tab) {
+    const rows = rowsFor(tab);
+    const chart = el(
+      'div',
+      { class: 'chart' },
+      el(
+        'div',
+        { class: 'chart-scale-row' },
+        el('span', { class: 'chart-corner' }),
+        buildScale(),
+        el('span', {}),
+      ),
+      ...rows.map(buildChartRow),
+    );
+    const scaleNote = el(
+      'p',
+      { class: 'scale-note' },
+      el('strong', {}, 'Logarithmic scale.'),
+      ' Each gridline is ×10 the previous, so 10 Mbps and 800 Gbps stay readable together. Slow technologies are not squeezed to zero.',
+    );
+    const notes = el('div', { class: 'family-notes' });
+    if (tab === 'All' || tab === 'PCIe') {
+      notes.append(
+        el(
+          'p',
+          { class: 'family-note note-pcie' },
+          'PCIe rows show one-way (per-direction) ×16 link ceilings. The same links carry the same amount in the other direction at the same time (full duplex).',
+        ),
+      );
+    }
+    if (tab === 'All' || tab === 'USB')
+      notes.append(el('p', { class: 'family-note note-usb' }, FAMILY_NOTES.USB));
+    if (tab === 'All' || tab === 'HDMI')
+      notes.append(el('p', { class: 'family-note note-hdmi' }, FAMILY_NOTES.HDMI));
+    if (tab === 'All' || tab === 'Ethernet')
+      notes.append(el('p', { class: 'family-note note-eth' }, FAMILY_NOTES.Ethernet));
+    if (tab === 'All' || tab === 'Wi-Fi')
+      notes.append(el('p', { class: 'family-note note-wifi' }, FAMILY_NOTES['Wi-Fi']));
+
+    const roadmap = el(
+      'div',
+      { class: 'roadmap-strip' },
+      el('h3', {}, 'Emerging / roadmap — not part of the ratified list above'),
+      ...ROADMAP_ITEMS.map((item) =>
+        el(
+          'p',
+          { class: 'roadmap-item' },
+          el('span', { class: 'roadmap-label' }, item.label),
+          el('span', { class: 'roadmap-rate' }, item.displayRate),
+          ' — ',
+          item.note,
+          ' ',
+          sourceLinks(item.sourceIds),
+        ),
+      ),
+    );
+
+    const panel = el(
+      'div',
+      {
+        class: 'tab-panel',
+        role: 'tabpanel',
+        id: `panel-${tab.toLowerCase()}`,
+        'aria-labelledby': `tab-${tab.toLowerCase()}`,
+      },
+      chart,
+      scaleNote,
+      notes,
+      roadmap,
+      buildTable(rows),
+    );
+    return panel;
+  }
+
+  function selectTab(tab: Tab, btn: HTMLButtonElement) {
+    activeTab = tab;
+    tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]').forEach((t) => {
+      const isActive = t === btn;
+      t.setAttribute('aria-selected', String(isActive));
+      t.tabIndex = isActive ? 0 : -1;
+      t.classList.toggle('active', isActive);
+    });
+    panels.replaceChildren(renderPanel(activeTab));
+  }
+
+  // Arrow-key roving focus for the tablist
+  tablist.addEventListener('keydown', (e) => {
+    const idx = TABS.indexOf(activeTab);
+    let next: number | null = null;
+    if (e.key === 'ArrowRight') next = (idx + 1) % TABS.length;
+    if (e.key === 'ArrowLeft') next = (idx - 1 + TABS.length) % TABS.length;
+    if (e.key === 'Home') next = 0;
+    if (e.key === 'End') next = TABS.length - 1;
+    if (next !== null) {
+      e.preventDefault();
+      const target = tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next];
+      target.focus();
+      target.click();
+    }
+  });
+
+  for (const tab of TABS) tablist.append(buildTabButton(tab, tab === activeTab));
+  selectTab(activeTab, tablist.querySelector<HTMLButtonElement>('[role="tab"]')!);
+
+  section.append(tablist, panels);
+  return section;
+}
+
+function th(text: string) {
+  return el('th', { scope: 'col' }, text);
+}
