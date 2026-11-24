@@ -17,6 +17,9 @@ not the same thing. Every number on the site says which of these it is.
   like after protocol overhead.
 - **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows
   the Link A width control.
+- **Cross-standard comparison**: any two standards against each other (for
+  example DDR5 vs PCIe 4.0 x16), with clickable overhead presets that apply
+  each family's typical default, and a unit switch (MB/s, GB/s, Gbps, TB/s).
 - **Comparison chart and table**: USB, HDMI, Ethernet, Wi-Fi and RAM (JEDEC
   DDR1-6) on a logarithmic scale (10 Mbps to 1 Tbps), with per-category filters
   (each with an inline SVG icon and row count). Each row says what the number
