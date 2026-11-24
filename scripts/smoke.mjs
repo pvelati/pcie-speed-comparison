@@ -401,6 +401,79 @@ try {
     await page.evaluate(() => !document.documentElement.classList.contains('light')),
   );
 
+  // -- shareable state ----------------------------------------------------
+  const shareUrl = PAGE_URL + '#a=5-4&b=6-16&o=10&ca=ddr5&coa=0&cb=pcie-6&cob=10&u=gbit&t=memory';
+  await page.goto(shareUrl, { waitUntil: 'networkidle0' });
+  check(
+    'hash restores explorer (A Gen5 x4, B Gen6 x16)',
+    await page.evaluate(
+      () =>
+        document.querySelector('#gen-a-5')?.checked === true &&
+        document.querySelector('#lanes-a-4')?.checked === true &&
+        document.querySelector('#gen-b-6')?.checked === true &&
+        document.querySelector('#lanes-b-16')?.checked === true,
+    ),
+  );
+  check(
+    'hash restores overhead (10%: A hero 14.18 GB/s)',
+    (
+      await page.$eval(
+        '#explorer .link-panel[data-link="a"] .metric-hero .metric-value .num',
+        (n) => n.textContent,
+      )
+    ).includes('14.18'),
+  );
+  check(
+    'hash restores crosslink (588.8 / 921.6 Gbps, unit Gbps)',
+    await page.evaluate(() => {
+      const vals = [...document.querySelectorAll('.cross-side .cross-value')].map(
+        (n) => n.textContent,
+      );
+      return (
+        vals[0].includes('588.8') &&
+        vals[1].includes('921.6') &&
+        document.querySelector('#cross-unit-gbit')?.checked === true
+      );
+    }),
+  );
+  check(
+    'hash restores compare tab (Memory)',
+    (await page.$eval('#tab-memory', (b) => b.getAttribute('aria-selected'))) === 'true',
+  );
+  await page.evaluate(() => document.querySelector('#gen-a-3')?.click());
+  await page.waitForFunction(() => location.hash.includes('a=3-4'));
+  check(
+    'changing a control updates the hash',
+    (await page.evaluate(() => location.hash)).includes('a=3-4'),
+  );
+
+  // -- machine-readable data ----------------------------------------------
+  const dj = await page.evaluate(async (base) => {
+    const r = await fetch(base + 'data.json');
+    return { status: r.status, body: await r.text() };
+  }, PAGE_URL);
+  let djOk = false;
+  let ddr5Rate = 0;
+  let pcieCount = 0;
+  try {
+    const d = JSON.parse(dj.body);
+    djOk = dj.status === 200;
+    ddr5Rate = d.interfaces?.find((i) => i.id === 'ddr5')?.rateGbps ?? 0;
+    pcieCount = d.pcie?.length ?? 0;
+  } catch {
+    /* not JSON */
+  }
+  check(
+    'data.json serves (7 PCIe gens, DDR5 588.8 Gbps)',
+    djOk && pcieCount === 7 && ddr5Rate === 588.8,
+    `status ${dj.status}, pcie ${pcieCount}, ddr5 ${ddr5Rate}`,
+  );
+  check(
+    'llms.txt serves',
+    (await page.evaluate(async (base) => (await fetch(base + 'llms.txt')).status, PAGE_URL)) ===
+      200,
+  );
+
   check('log scale note present', (await page.$('.scale-note')) !== null);
   check('chart has decade gridlines', (await page.$$eval('.chart-tickline', (t) => t.length)) > 20);
 

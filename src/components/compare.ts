@@ -11,7 +11,7 @@ import {
   type RateStatus,
 } from '../data/standards.js';
 import { familyIcon, FAMILY_ICON } from './icons.js';
-import { buildCrossLink } from './crosslink.js';
+import { type CrossLinkHandle } from './crosslink.js';
 import { SOURCES_BY_ID } from '../data/sources.js';
 import { linkMetrics } from '../lib/pcie.js';
 import { formatRate } from '../lib/format.js';
@@ -60,7 +60,7 @@ export const ALL_ROWS: ChartRow[] = [
   ...INTERFACE_RATES.map((r) => ({ ...r, rateKind: r.rateKind })),
 ].sort((a, b) => b.rateGbps - a.rateGbps);
 
-const TABS = ['All', 'PCIe', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
+export const TABS = ['All', 'PCIe', 'USB', 'HDMI', 'Ethernet', 'Wi-Fi', 'Memory'] as const;
 
 function countFor(tab: (typeof TABS)[number]): number {
   return tab === 'All' ? ALL_ROWS.length : ALL_ROWS.filter((r) => r.family === tab).length;
@@ -124,7 +124,10 @@ const FAMILY_NOTES: Record<Exclude<Tab, 'All' | 'PCIe'>, string> = {
     'DRAM bandwidth is a per-channel figure (64-bit bus; 96-bit in the DDR6 preview). A system multiplies the per-channel rate by its channel count (two on most desktops, more in servers). DRAM is a shared read/write bus: the number shown is total channel bandwidth, not a one-way rate, and pin transfer rates (MT/s) are not one-way link rates like PCIe.',
 };
 
-export function buildComparison(): HTMLElement {
+export function buildComparison(
+  cross: CrossLinkHandle,
+  onTabChange?: (tab: string) => void,
+): HTMLElement {
   const section = el(
     'section',
     { id: 'compare', class: 'section compare' },
@@ -394,6 +397,7 @@ export function buildComparison(): HTMLElement {
       t.classList.toggle('active', isActive);
     });
     panels.replaceChildren(renderPanel(activeTab));
+    onTabChange?.(tab);
   }
 
   // Arrow-key roving focus for the tablist
@@ -416,7 +420,7 @@ export function buildComparison(): HTMLElement {
   selectTab(activeTab, tablist.querySelector<HTMLButtonElement>('[role="tab"]')!);
 
   section.append(tablist, resultCount, panels);
-  section.insertBefore(buildCrossLink(), tablist);
+  section.insertBefore(cross.root, tablist);
   return section;
 }
 

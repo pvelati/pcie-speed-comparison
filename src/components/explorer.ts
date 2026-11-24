@@ -22,7 +22,24 @@ interface PanelRefs {
   metricsRoot: HTMLElement;
 }
 
-export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLElement {
+export interface ExplorerState {
+  genA: number;
+  lanesA: number;
+  genB: number;
+  lanesB: number;
+  overhead: number;
+}
+
+export interface ExplorerHandle {
+  root: HTMLElement;
+  get: () => ExplorerState;
+  set: (s: Partial<ExplorerState>) => void;
+}
+
+export function buildExplorer(
+  onLinkAChange: (lanes: number) => void,
+  onStateChange?: () => void,
+): ExplorerHandle {
   const section = el(
     'section',
     { id: 'explorer', class: 'section explorer' },
@@ -71,6 +88,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       (value) => {
         state.gen = PCIE_GENERATIONS.find((g) => g.generation === Number(value))!;
         refresh();
+        onStateChange?.();
       },
     );
     const laneGroup = radioGroup(
@@ -81,6 +99,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
       (value) => {
         state.lanes = Number(value);
         refresh();
+        onStateChange?.();
       },
     );
 
@@ -331,6 +350,7 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
     overheadOut.textContent = `${overhead}%`;
     syncPresets();
     for (const f of refreshFns) f();
+    onStateChange?.();
   });
   for (const b of presetBtns) {
     b.addEventListener('click', () => {
@@ -366,7 +386,30 @@ export function buildExplorer(onLinkAChange: (lanes: number) => void): HTMLEleme
     ),
   );
 
-  return section;
+  const setRadio = (name: string, value: string) => {
+    section.querySelector<HTMLInputElement>(`input[name="${name}"][value="${value}"]`)?.click();
+  };
+  const handle: ExplorerHandle = {
+    root: section,
+    get: () => ({
+      genA: stateA.gen.generation,
+      lanesA: stateA.lanes,
+      genB: stateB.gen.generation,
+      lanesB: stateB.lanes,
+      overhead,
+    }),
+    set: (s) => {
+      if (s.genA !== undefined) setRadio('gen-a', String(s.genA));
+      if (s.lanesA !== undefined) setRadio('lanes-a', String(s.lanesA));
+      if (s.genB !== undefined) setRadio('gen-b', String(s.genB));
+      if (s.lanesB !== undefined) setRadio('lanes-b', String(s.lanesB));
+      if (s.overhead !== undefined) {
+        overheadRange.value = String(s.overhead);
+        overheadRange.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    },
+  };
+  return handle;
 }
 
 function radioGroup(

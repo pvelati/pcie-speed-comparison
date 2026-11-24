@@ -17,6 +17,11 @@ not the same thing. Every number on the site says which of these it is.
   like after protocol overhead.
 - **Lane visualizer**: an original SVG of parallel full-duplex lanes that follows
   the Link A width control.
+- **Shareable state**: the explorer, cross-standard comparison and active
+  filter live in the URL hash, so any view can be copied as a link.
+- **Machine-readable data**: `data.json` (all rates, meanings, caveats, source
+  IDs) is generated from the typed data model at build time, and `llms.txt`
+  points to it.
 - **Light and dark themes**: follows the OS preference, with a persistent
   toggle in the header (`?theme=light|dark` also works); print stylesheet
   included.

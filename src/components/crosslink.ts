@@ -36,7 +36,21 @@ interface SideState {
   overhead: number;
 }
 
-export function buildCrossLink(): HTMLElement {
+export interface CrossLinkState {
+  a: string;
+  ohA: number;
+  b: string;
+  ohB: number;
+  unit: string;
+}
+
+export interface CrossLinkHandle {
+  root: HTMLElement;
+  get: () => CrossLinkState;
+  set: (s: Partial<CrossLinkState>) => void;
+}
+
+export function buildCrossLink(onStateChange?: () => void): CrossLinkHandle {
   let unit: Unit = UNITS[0];
   const state: Record<'a' | 'b', SideState> = {
     a: { row: byId('ddr5'), overhead: DEFAULT_OVERHEAD.Memory },
@@ -159,26 +173,60 @@ export function buildCrossLink(): HTMLElement {
     } else {
       ratio.textContent = `B is ${formatRate(1 / r)}× A`;
     }
+    onStateChange?.();
   }
 
   refresh();
 
-  return el(
-    'div',
-    { class: 'crosslink' },
-    el('h3', {}, familyIcon('pcie', 18), 'Compare any two standards'),
-    el(
-      'p',
-      { class: 'cross-note' },
-      "Pick a standard for each side. Overhead starts at the family's typical default on selection; adjust it with the slider (0-40%, 1% steps) or the preset buttons. ",
-      'PCIe rows are ×16 one-way link ceilings; RAM rows are per-channel bandwidth; the other families are headline spec rates. The ratio uses the overhead-adjusted values.',
-    ),
-    el(
+  const handle: CrossLinkHandle = {
+    root: el(
       'div',
-      { class: 'cross-grid' },
-      a.side,
-      el('div', { class: 'cross-center' }, ratio, unitGroup),
-      b.side,
+      { class: 'crosslink' },
+      el('h3', {}, familyIcon('pcie', 18), 'Compare any two standards'),
+      el(
+        'p',
+        { class: 'cross-note' },
+        "Pick a standard for each side. Overhead starts at the family's typical default on selection; adjust it with the slider (0-40%, 1% steps) or the preset buttons. ",
+        'PCIe rows are ×16 one-way link ceilings; RAM rows are per-channel bandwidth; the other families are headline spec rates. The ratio uses the overhead-adjusted values.',
+      ),
+      el(
+        'div',
+        { class: 'cross-grid' },
+        a.side,
+        el('div', { class: 'cross-center' }, ratio, unitGroup),
+        b.side,
+      ),
     ),
-  );
+    get: () => ({
+      a: state.a.row.id,
+      ohA: state.a.overhead,
+      b: state.b.row.id,
+      ohB: state.b.overhead,
+      unit: unit.id,
+    }),
+    set: (s) => {
+      const applySide = (id: 'a' | 'b', rowId?: string, oh?: number) => {
+        const side = id === 'a' ? a : b;
+        const sel = side.side.querySelector('select');
+        if (rowId && sel) {
+          const exists = [...sel.options].some((o) => o.value === rowId);
+          if (exists && sel.value !== rowId) {
+            sel.value = rowId;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+        if (oh !== undefined) side.applyOverhead(oh);
+      };
+      if (s.a !== undefined || s.ohA !== undefined) applySide('a', s.a, s.ohA);
+      if (s.b !== undefined || s.ohB !== undefined) applySide('b', s.b, s.ohB);
+      if (s.unit !== undefined) {
+        const input = document.querySelector<HTMLInputElement>(`#cross-unit-${s.unit}`);
+        if (input && !input.checked) {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    },
+  };
+  return handle;
 }
