@@ -52,6 +52,30 @@ function svgEl(tag: 'svg' | 'path', attrs: Record<string, string>): SVGElement {
   return node;
 }
 
+/** The brand mark: three colored lanes with arrowheads (matches the favicon). */
+export function logoMark(size = 22): SVGElement {
+  const svg = svgEl('svg', {
+    class: 'logo-mark',
+    width: String(size),
+    height: String(size),
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    'aria-hidden': 'true',
+  });
+  const colors = ['var(--cyan)', 'var(--blue)', 'var(--amber)'];
+  for (let i = 0; i < PATHS.pcie.length; i++) {
+    const p = svgEl('path', {
+      d: PATHS.pcie[i],
+      stroke: colors[i],
+      'stroke-width': '2',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+    });
+    svg.append(p);
+  }
+  return svg;
+}
+
 export function familyIcon(name: IconName, size = 18): SVGSVGElement {
   const svg = svgEl('svg', {
     class: `icon icon-${name}`,

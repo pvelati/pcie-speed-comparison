@@ -147,9 +147,8 @@ p {
   letter-spacing: 0.01em;
 }
 
-.brand-mark {
-  color: var(--cyan);
-  font-size: 20px;
+.logo-mark {
+  display: block;
 }
 
 .site-nav {
@@ -635,11 +634,31 @@ p {
 .lane-tx {
   stroke: var(--cyan);
   stroke-width: 2;
+  opacity: 0.45;
 }
 
 .lane-rx {
   stroke: var(--amber);
   stroke-width: 2;
+  opacity: 0.45;
+}
+
+/* Animated data flow over the lane arrows (direction comes from path
+   geometry: TX paths run left->right, RX paths right->left). */
+
+.lane-flow {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 10 30;
+  opacity: 0.9;
+}
+
+.lane-flow-tx {
+  stroke: var(--cyan);
+}
+
+.lane-flow-rx {
+  stroke: var(--amber);
 }
 
 .lane-notes {
@@ -2193,5 +2212,64 @@ input {
   .data-table,
   .source-group {
     break-inside: avoid;
+  }
+}
+
+/* ==========================================================================
+   Motion (all decorative; disabled under prefers-reduced-motion)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .lane-flow {
+    animation: lane-flow 1.4s linear infinite;
+  }
+
+  .lane-row {
+    animation: lane-in 0.3s ease-out both;
+  }
+
+  .hero::before {
+    animation: hero-pulse 9s ease-in-out infinite;
+  }
+
+  .hero-chip {
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .hero-chip:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Reduced motion: hide the dashed overlay so the static arrows stay clean. */
+@media (prefers-reduced-motion: reduce) {
+  .lane-flow {
+    display: none;
+  }
+}
+
+@keyframes lane-flow {
+  to {
+    stroke-dashoffset: -80;
+  }
+}
+
+@keyframes lane-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+@keyframes hero-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.6;
   }
 }

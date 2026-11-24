@@ -6,7 +6,7 @@ import { buildCrossLink } from './components/crosslink.js';
 import type { ExplorerState } from './components/explorer.js';
 import type { CrossLinkState } from './components/crosslink.js';
 import { ALL_ROWS, TABS } from './components/compare.js';
-import { familyIcon, FAMILY_ICON } from './components/icons.js';
+import { familyIcon, FAMILY_ICON, logoMark } from './components/icons.js';
 import { buildLaneVisualizer } from './components/lanes.js';
 import { buildComparison } from './components/compare.js';
 import { buildExamples } from './components/examples.js';
@@ -84,12 +84,7 @@ function header() {
   return el(
     'header',
     { class: 'site-header' },
-    el(
-      'a',
-      { class: 'brand', href: '#top' },
-      el('span', { class: 'brand-mark', 'aria-hidden': 'true' }, '▤'),
-      el('span', {}, 'Bandwidth Atlas'),
-    ),
+    el('a', { class: 'brand', href: '#top' }, logoMark(22), el('span', {}, 'Bandwidth Atlas')),
     el(
       'nav',
       { class: 'site-nav', 'aria-label': 'Page sections' },

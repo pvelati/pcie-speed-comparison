@@ -23,7 +23,9 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
         { class: 'lede' },
         'A PCIe link is a set of parallel lanes. Each lane is a ',
         el('strong', {}, 'full-duplex pair'),
-        ' of differential signaling paths: one transmitting, one receiving. Change the Link A width in the explorer and the diagram follows.',
+        ' of differential signaling paths: one transmitting, one receiving. ',
+        'The moving dashes are data: transmit and receive run at the same time on every lane, that is full duplex. ',
+        'Change the Link A width in the explorer and the diagram follows.',
       ),
     ),
   );
@@ -124,6 +126,15 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
           'marker-end': 'url(#arrow-tx)',
         }),
       );
+      const flowTx = elNS('line', {
+        class: 'lane-flow lane-flow-tx',
+        x1: '52',
+        y1: String(txY),
+        x2: String(WIDTH - 58),
+        y2: String(txY),
+      });
+      flowTx.style.animationDelay = `${-((i % 6) * 0.23).toFixed(2)}s`;
+      row.append(flowTx);
       // RX arrow (right → left), bottom of the lane
       const rxY = y + (LANE_H - 6) / 2 + 5;
       row.append(
@@ -136,6 +147,15 @@ export function buildLaneVisualizer(): { section: HTMLElement; setLanes: (n: num
           'marker-end': 'url(#arrow-rx)',
         }),
       );
+      const flowRx = elNS('line', {
+        class: 'lane-flow lane-flow-rx',
+        x1: String(WIDTH - 52),
+        y1: String(rxY),
+        x2: '58',
+        y2: String(rxY),
+      });
+      flowRx.style.animationDelay = `${-(((i + 3) % 6) * 0.23).toFixed(2)}s`;
+      row.append(flowRx);
       frag.append(row);
     }
     lanesG.replaceChildren(frag);
